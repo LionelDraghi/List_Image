@@ -1,0 +1,71 @@
+-- -----------------------------------------------------------------------------
+-- Print_List
+-- Copyright (C) 2018 - Lionel Draghi
+-- This program is free software;
+-- you can redistribute it and/or modify it under the terms of the GNU General
+-- Public License Versions 3, refer to the COPYING file.
+-- -----------------------------------------------------------------------------
+
+project List_Image is
+
+   for Source_Dirs use ("src");
+   for Object_Dir use "obj";
+   for Main use ("test_list_image.adb");
+   for Exec_Dir use ".";
+
+   package Ide is
+      for Documentation_Dir use "docs";
+      for Vcs_Kind use "Git";
+   end Ide;
+
+   package Builder is
+      for Default_Switches ("ada") use ("-g", "-m");
+   end Builder;
+
+   package Compiler is
+      Common_Switches := ("-gnat2012");
+      Common_Debug_Switches := Common_Switches &  
+      ("-g", "-O0",  "-gnatQ", "-gnatf",  "-gnato", "-fstack-check", "-gnata", "-gnateE", "-gnatVa", "-gnatwa", "-gnatyabefhiklnprtx");
+      -- -gnatQ : Don't quit
+      -- -gnatf : Full errors
+      -- -gnato : Intermediate overflows to be handled in strict mode.
+      -- -fstack-check : stack checking
+      -- -gnata : assertions
+      -- -gnateE : extra infos in exception messages
+      -- -gnatVa : all validity checks
+      -- -gnatwa : activate most optional warning messages
+      --
+      -- Style checking : 
+      -- a : Check attribute casing
+      -- b : Blanks not allowed at statement end
+      -- e : Check end/exit labels
+      -- f : No form feeds or vertical tabs
+      -- h : No horizontal tabs
+      -- i : Check if-then layout
+      -- k : Check keyword casing
+      -- l : Check layout
+      -- n : Check casing of entities in Standard
+      -- p : Check pragma casing
+      -- r : Check references
+      -- t : Check token spacing
+      --removed  M100 : Set maximum line length
+      -- x : Check extra parentheses.
+     
+     for Switches ("ada") use Common_Debug_Switches;
+
+   end Compiler;
+
+   package Binder is
+      for Default_Switches ("ada") use ("-E");
+   end Binder;
+
+   package Linker is
+      for Default_Switches ("ada") use ("-g", "-fprofile-generate");
+   end Linker;
+
+   package Pretty_Printer is
+      for Switches ("ada") use ("-M100", "-l2", "-A1", "-A2", "-A3", "-A4");
+   end Pretty_Printer;
+
+end List_Image;
+
