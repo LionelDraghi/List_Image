@@ -1,6 +1,9 @@
 with List_Format;
 with List_Image;
+with List_Image_2;
+with Bulleted_List_Format;
 with Bracketed_List_Format;
+with Markdown_List_Format;
 
 with Ada.Containers.Doubly_Linked_Lists;
 with Ada.Containers.Indefinite_Doubly_Linked_Lists;
@@ -124,7 +127,6 @@ begin
 
       package Default_List_Format is new List_Format;
 
-      -- use Integer_Lists;
       function Integer_List_Image_2 is new List_Image
         (Integer,
          Integer'Image,
@@ -201,6 +203,161 @@ begin
       Check (That => Test_List_Image_1 = "Tests test_1, test_2 and test_3 fail",
              Text => "Tests test_1, test_2 and test_3 fail",
              Text_If_Failed => Test_List_Image_1);
+
+   end;
+
+   -- --------------------------------------------------------------------------
+   Put_Line ("5. Simple bulleted list");
+
+   declare
+      Tests_List : Tests_Lists.List;
+      use Tests_Lists;
+
+      function Test_List_Image_1 is new List_Image
+        (String,
+         Identity,
+         Tests_Lists.Cursor,
+         Tests_List.First,
+         Tests_Lists.Next,
+         Tests_List.Length,
+         Tests_Lists.Element,
+         Bulleted_List_Format);
+   begin
+      Tests_List.Clear;
+      Check (That           => Test_List_Image_1 = "",
+             Text           => "Test_List_Image_1 = """,
+             Text_If_Failed => Test_List_Image_1);
+
+      Tests_List.Append ("test_1");
+      Check (That           => Test_List_Image_1 = ASCII.CR & ASCII.LF
+             & "- test_1" & ASCII.CR & ASCII.LF,
+             Text           => "- test_1",
+             Text_If_Failed => Test_List_Image_1);
+
+      Tests_List.Append ("test_2");
+      Check (That           => Test_List_Image_1 = ASCII.CR & ASCII.LF
+             & "- test_1" & ASCII.CR & ASCII.LF
+             & "- test_2" & ASCII.CR & ASCII.LF,
+             Text           => "LF - test_1 LF - test_2 LF",
+             Text_If_Failed => Test_List_Image_1);
+
+      Tests_List.Append ("test_3");
+      Check (That           => Test_List_Image_1 = ASCII.CR & ASCII.LF
+             & "- test_1" & ASCII.CR & ASCII.LF
+             & "- test_2" & ASCII.CR & ASCII.LF
+             & "- test_3" & ASCII.CR & ASCII.LF,
+             Text           => "LF - test_1 LF - test_2 LF - test_3 LF",
+             Text_If_Failed => Test_List_Image_1);
+   end;
+
+   -- --------------------------------------------------------------------------
+   Put_Line ("6. Markdown bulleted list");
+
+   declare
+      Tests_List : Tests_Lists.List;
+      use Tests_Lists;
+
+      function Test_List_Image_1 is new List_Image
+        (String,
+         Identity,
+         Tests_Lists.Cursor,
+         Tests_List.First,
+         Tests_Lists.Next,
+         Tests_List.Length,
+         Tests_Lists.Element,
+         Markdown_List_Format);
+   begin
+      Tests_List.Clear;
+      Check (That           => Test_List_Image_1 = ASCII.CR & ASCII.LF,
+             Text           => "Test_List_Image_1 = """,
+             Text_If_Failed => Test_List_Image_1);
+
+      Tests_List.Append ("test_1");
+      Check (That           => Test_List_Image_1 =
+               ASCII.CR & ASCII.LF & ASCII.CR & ASCII.LF
+             & "- test_1" & ASCII.CR & ASCII.LF & ASCII.CR & ASCII.LF,
+             Text           => "- test_1",
+             Text_If_Failed => Test_List_Image_1);
+
+      Tests_List.Append ("test_2");
+      Check (That           => Test_List_Image_1 =
+               ASCII.CR & ASCII.LF & ASCII.CR & ASCII.LF
+             & "- test_1" & ASCII.CR & ASCII.LF
+             & "- test_2" & ASCII.CR & ASCII.LF & ASCII.CR & ASCII.LF,
+             Text           => "LF - test_1 LF - test_2 LF",
+             Text_If_Failed => Test_List_Image_1);
+
+      Tests_List.Append ("test_3");
+      Check (That           => Test_List_Image_1 =
+               ASCII.CR & ASCII.LF & ASCII.CR & ASCII.LF
+             & "- test_1" & ASCII.CR & ASCII.LF
+             & "- test_2" & ASCII.CR & ASCII.LF
+             & "- test_3" & ASCII.CR & ASCII.LF & ASCII.CR & ASCII.LF,
+             Text           => "LF - test_1 LF - test_2 LF - test_3 LF",
+             Text_If_Failed => Test_List_Image_1);
+
+   end;
+
+   -- --------------------------------------------------------------------------
+   Put_Line ("7. Markdown table line");
+
+   declare
+      L1, L2, L3, L4, L5 : Tests_Lists.List;
+      use Tests_Lists;
+
+      package Markdown_Table_Line is new List_Format
+        (Prefix           => "|",
+         Separator        => "|",
+         Postfix          => "|",
+         Prefix_If_Empty  => "",
+         Postfix_If_Empty => "");
+      -- Should be named Github Flavored Markdown, as Markdown
+      -- don't define tables.
+      function Image (C : Tests_Lists.Cursor) return String is
+      begin
+         return Element (C);
+      end Image;
+
+      function Iterator (L : Tests_Lists.List) return
+        Tests_Lists.List_Iterator_Interfaces.Forward_Iterator'Class is
+      begin
+         return Tests_Lists.List_Iterator_Interfaces.Forward_Iterator'Class
+           (Tests_Lists.Iterate (L));
+      end Iterator;
+
+      function Line_Image is new List_Image_2
+        (Cursor              => Tests_Lists.Cursor,
+         Image               => Image,
+         Container           => Tests_Lists.List,
+         Iterator_Interfaces => Tests_Lists.List_Iterator_Interfaces,
+         Iterator            => Iterator,
+         Format              => Markdown_Table_Line);
+
+   begin
+      Put_Line ("Exemple From http://www.tablesgenerator.com/markdown_tables");
+      L1.Append ("Tables");
+      L1.Append ("Are");
+      L1.Append ("Cool");
+      L2.Append ("----------");
+      L2.Append (":-------------:");
+      L2.Append ("------:");
+      L3.Append ("col 1 is");
+      L3.Append ("left-aligned");
+      L3.Append ("$1600");
+      L4.Append ("col 2 is");
+      L4.Append ("centered");
+      L4.Append (" $12");
+      L5.Append ("col 3 is");
+      L5.Append ("right - aligned");
+      L5.Append ("$1");
+
+
+      Put_Line (Line_Image (L1));
+      Put_Line ("*******************************************");
+      Put_Line (Line_Image (L2));
+      Put_Line (Line_Image (L3));
+      Put_Line (Line_Image (L4));
+      Put_Line (Line_Image (L5));
 
    end;
 

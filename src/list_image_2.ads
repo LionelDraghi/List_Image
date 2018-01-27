@@ -1,18 +1,16 @@
 with List_Format;
 
-with Ada.Containers;
+-- with Ada.Containers;
+with Ada.Iterator_Interfaces;
 
 generic
-   type Element_Type (<>) is Private;
-   with function Image (Element : Element_Type) return String is <>;
-
    type Cursor is private;
-   with function First return Cursor is <>;
-   with function Next (Position : Cursor) return Cursor is <>;
-   with function Length return Ada.Containers.Count_Type is <>;
+   with function Image (C : Cursor) return String;
 
-   with function Element (Position : Cursor) return Element_Type is <>;
+   type Container (<>) is private;
+   with package Iterator_Interfaces is new Ada.Iterator_Interfaces (Cursor, others => <>);
+   with function Iterator (C : Container) return Iterator_Interfaces.Forward_Iterator'Class;
 
    with package Format is new List_Format (<>);
 
-function List_Image return String;
+function List_Image_2 (Cont : in Container) return String;

@@ -1,20 +1,26 @@
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 
-function List_Image return String is
+function List_Image_2 (Cont : in Container) return String is
+   I : constant Iterator_Interfaces.Forward_Iterator'class := Iterator (Cont);
    Tmp : Unbounded_String;
+   -- Tmp : Unbounded_String := Null_Unbounded_String;
    C   : Cursor;
+   use Iterator_Interfaces;
 begin
-   case Length is
-      when 0 => return "";
-      when 1 => return Format.Opening & Image (Element (First)) & Format.Postfix;
-      when others =>
-         C := First;
-         Tmp := To_Unbounded_String (Format.Opening) & Image (Element (C));
-         for I in 2 .. Length loop
-            C := Next (C);
-            Tmp := Tmp  & Format.Separator & Image (Element (C));
-         end loop;
-         Tmp := Tmp & Format.Postfix;
-   end case;
-   return To_String (Tmp);
-end List_Image;
+   C := Iterator_Interfaces.First (I);
+
+   if not Iterator_Interfaces.Has_Element (C) then
+      -- empty data structure
+      return Format.Prefix_If_Empty & Format.Postfix_If_Empty;
+
+   else
+      Tmp := To_Unbounded_String (Format.Prefix);
+      loop
+         Tmp := To_Unbounded_String (Image (C));
+         C := Iterator_Interfaces.Next (I, C);
+         exit when not Iterator_Interfaces.Has_Element (C);
+      end loop;
+   end if;
+   return (To_String (Tmp & Format.Postfix));
+
+end List_Image_2;
