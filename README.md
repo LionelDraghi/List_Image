@@ -123,22 +123,22 @@ print the list.
    package List_Style is end List_Style;
 ```
 
-`Prefix`, `Postfix` and `Separator` parameters are self explaining.
+`Prefix`, `Postfix` and `Separator` parameters are self explaining.  
 If `Prefix` is set to '(', `Postfix` to ')', and `Separator` to ',', the returned Image will be of this kind : 
 ```
 (A,B,C,D)
 ```
-If all parameter are set to "", the image will be :
+If all parameters are set to "", the image will be :
 ```
 ABCD
 ```
 Special Prefix and Postfix are possible for null list, and for list with
-a single element.
-This is usefull when you want to want `[A,B,C]` as an image, but you don't
-want `[]` when the list is empty.
+a single element.  
+This is usefull when you want to want `[A,B,C]` as an image, but you
+want an empty string (and not `[]`) when the list is empty.
 
 An interresting application of this feature is to have well written comments
-regarding singular and plural.  
+regarding singular and plural!  
 If you want your image to be
 ```
 A item found
@@ -159,9 +159,9 @@ of Line sequence to split the list on several line, the `EOL` String and
 parameters are provided for that purpose.
 ## About
 
-The initial discussion on "iterable containers" is [on comp.lang.ada](https://groups.google.com/d/msg/comp.lang.ada/El_hKSV5SVA/GkyFb27SAAAJ), but it's certainly not the first one.
+This package was created by Lionel Draghi, and is released under [Apache License v2.0](LICENSE-2.0.md).
 
-Released under [Apache License v2.0](LICENSE-2.0.md).
+The initial discussion on "iterable containers" is [on comp.lang.ada](https://groups.google.com/d/msg/comp.lang.ada/El_hKSV5SVA/GkyFb27SAAAJ), but it's certainly not the first one.
 
 ## Building
 
@@ -173,6 +173,7 @@ To build and run the tests, just :
 ## Portability
 
 Only tested on my Linux box, but the sources and tests should run nice on most platform, including windows.  
-The utilities itself deals with line terminator. Default value is CR/LF, but you can change it, it's a generic parameter.
+The `List_Image` package deals with line terminator for multiline styles.  
+Default value of the `EOL` parameter is CR/LF, but you can change it at `List_Style` instantiation time.
 
 Lionel
