@@ -19,12 +19,12 @@ project List_Image is
    end Ide;
 
    package Builder is
-      for Default_Switches ("ada") use ("-g", "-m");
+      for Default_Switches ("ada") use ("-g");
    end Builder;
 
    package Compiler is
       Common_Switches := ("-gnat2012");
-      Common_Debug_Switches := Common_Switches &  
+      Common_Debug_Switches := Common_Switches &
       ("-g", "-O0",  "-gnatQ", "-gnatf",  "-gnato", "-fstack-check", "-gnata", "-gnateE", "-gnatVa", "-gnatwa", "-gnatyabefhiklnprtx");
       -- -gnatQ : Don't quit
       -- -gnatf : Full errors
@@ -35,7 +35,7 @@ project List_Image is
       -- -gnatVa : all validity checks
       -- -gnatwa : activate most optional warning messages
       --
-      -- Style checking : 
+      -- Style checking :
       -- a : Check attribute casing
       -- b : Blanks not allowed at statement end
       -- e : Check end/exit labels
@@ -50,7 +50,7 @@ project List_Image is
       -- t : Check token spacing
       --removed  M100 : Set maximum line length
       -- x : Check extra parentheses.
-     
+
      for Switches ("ada") use Common_Debug_Switches;
 
    end Compiler;
@@ -68,4 +68,3 @@ project List_Image is
    end Pretty_Printer;
 
 end List_Image;
-

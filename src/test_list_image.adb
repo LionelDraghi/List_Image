@@ -1,37 +1,62 @@
-with List_Format;
 with List_Image;
-with List_Image_2;
-with Bulleted_List_Format;
-with Bracketed_List_Format;
-with Markdown_List_Format;
 
 with Ada.Containers.Doubly_Linked_Lists;
 with Ada.Containers.Indefinite_Doubly_Linked_Lists;
 with Ada.Containers.Indefinite_Hashed_Sets;
-with Ada.Strings.Hash_Case_Insensitive;
-
-with Ada.Text_IO;                           use Ada.Text_IO;
 with Ada.Command_Line;
+with Ada.Strings.Fixed;                             use Ada.Strings.Fixed;
+with Ada.Strings.Hash_Case_Insensitive;
+with Ada.Text_IO;                                   use Ada.Text_IO;
 
 procedure Test_List_Image is
 
-   Failure_Count : Natural := 0;
+   Failure_Count : Natural   := 0;
+   Check_Idx     : Positive  := 1;
+   Prefix        : Character := Character'Pred ('A');
+   Rule          : constant String := 80 * '-';
 
    -- --------------------------------------------------------------------------
-   procedure Check (That : Boolean;
-                    Text : String;
-                    Text_If_Failed : String := "") is
+   procedure New_Test (Title : String) is
+      -- Print a test separator of the form :
+      --    A. $Title test ---------
+      -- and increment A at each call
    begin
-      if That then
-         Put_Line ("OK : " & "Expected """ & Text & """");
+      Prefix    := Character'Succ (Prefix);
+      Check_Idx := 1;
+      New_Line;
+      Put_Line (Overwrite (Source   => Rule,
+                           Position => Rule'First,
+                           New_Item => Prefix & ". " & Title & " test "));
+   end New_Test;
+
+   -- --------------------------------------------------------------------------
+   procedure Check (Title    : String;
+                    Image    : String;
+                    Expected : String) is
+      -- Print a test sequence of the form :
+      --   A.1. $Title
+      --   Expected "$Expected"
+      -- then,
+      --   OK
+      -- if Image = Expected, or
+      --   ** Failed **
+      -- if not.
+      --
+      Tmp : constant String := Positive'Image (Check_Idx);
+      Idx : constant String := Tmp (2 .. Tmp'Last);
+   begin
+      New_Line;
+      Put_Line (Prefix & '.' & Idx & ". " & Title);
+      Put_Line ("Expected :");
+      Put_Line ("""" & Expected & """");
+      if Image = Expected then
+         Put_Line ("OK");
       else
-         Put_Line ("**Failed** : " & "Expected """ & Text
-                   & """, but """ & Text_If_Failed & """");
+         Put_Line ("**Failed**,  got """ & Image & """");
          Failure_Count := Failure_Count + 1;
       end if;
+      Check_Idx := Check_Idx + 1;
    end Check;
-
-   function Identity (S : String) return String is (S);
 
    -- container 1
    package Integer_Lists is new Ada.Containers.Doubly_Linked_Lists
@@ -45,123 +70,142 @@ procedure Test_List_Image is
    package Tests_Lists is new Ada.Containers.Indefinite_Doubly_Linked_Lists
      (String);
 
+   EOL : constant String := ASCII.CR & ASCII.LF;
+
 begin
    -- --------------------------------------------------------------------------
-   Put_Line ("1. Bracketed_List_Format instanciation test on a List");
-
+   New_Test ("Bracketed_List_Format instanciation test on a List");
    declare
       Int_List : Integer_Lists.List;
 
-      -- use Bracketed_List_Format;
-      function Integer_List_Image_1 is new List_Image
-        (Integer,
-         Integer'Image,
-         Integer_Lists.Cursor,
-         Int_List.First,
-         Integer_Lists.Next,
-         Int_List.Length,
-         Integer_Lists.Element,
-         Bracketed_List_Format);
+      use Integer_Lists;
+      function Iterator (L : List) return
+        List_Iterator_Interfaces.Forward_Iterator'Class is (Iterate (L));
+
+      function Image (C : Cursor) return String is
+           (Integer'Image (Element (C)));
+
+      function Integer_List_Image_1 is new List_Image.Image
+        (Cursor      => Cursor,
+         Image       => Image,
+         Iterator_If => List_Iterator_Interfaces,
+         Container   => List,
+         Iterator    => Iterator,
+         Format      => List_Image.Bracketed_List_Format);
+
+--        function Integer_List_Image_1 is new List_Image.List_Image_1
+--          (Integer,
+--           Integer'Image,
+--           Integer_Lists.Cursor,
+--           Int_List.First,
+--           Integer_Lists.Next,
+--           Int_List.Length,
+--           Integer_Lists.Element,
+--           List_Image.Bracketed_List_Format);
    begin
       Int_List.Clear;
-      Check (That => Integer_List_Image_1 = "[]",
-             Text => "List = []",
-             Text_If_Failed => Integer_List_Image_1);
+      Check (Title    => "Empty list",
+             Image    => Integer_List_Image_1 (Int_List),
+             Expected => "[]");
 
       Int_List.Append (1);
-      Check (That => Integer_List_Image_1 = "[ 1]",
-             Text => "List = [ 1]");
+      Check (Title    => "One item",
+             Image    => Integer_List_Image_1 (Int_List),
+             Expected => "[ 1]");
 
       Int_List.Append (2);
-      Check (That => Integer_List_Image_1 = "[ 1,  2]",
-             Text => "List = [ 1,  2]");
+      Check (Title    => "Two items",
+             Image    => Integer_List_Image_1 (Int_List),
+             Expected => "[ 1,  2]");
 
       Int_List.Append (3);
-      Check (That => Integer_List_Image_1 = "[ 1,  2,  3]",
-             Text => "List = [ 1,  2,  3]");
-
+      Check (Title    => "More items",
+             Image    => Integer_List_Image_1 (Int_List),
+             Expected => "[ 1,  2,  3]");
    end;
 
    -- --------------------------------------------------------------------------
-   Put_Line ("2. Bracketed_List_Format instantiation test on a Set");
-
+   New_Test ("Bracketed_List_Format instantiation test on a Set");
    declare
       Id_Set : Id_Sets.Set;
 
-      function Id_Set_Image_1 is new List_Image
-        (String,
-         Identity,
-         Cursor  => Id_Sets.Cursor,
-         First   => Id_Set.First,
-         Next    => Id_Sets.Next,
-         Length  => Id_Set.Length,
-         Element => Id_Sets.Element,
-         Format  => Bracketed_List_Format);
+      use Id_Sets;
+
+      function Id_Set_Image_1 is new List_Image.Image
+        (Cursor      => Cursor,
+         Image       => Element,
+         Iterator_If => Set_Iterator_Interfaces,
+         Container   => Set,
+         Iterator    => Iterate,
+         Format      => List_Image.Bracketed_List_Format);
 
    begin
       Id_Set.Clear;
-      Check (That => Id_Set_Image_1 = "[]",
-             Text => "Set = []",
-             Text_If_Failed => Id_Set_Image_1);
+      Check (Title    => "Empty list",
+             Image    => Id_Set_Image_1 (Id_Set),
+             Expected => "[]");
 
       Id_Set.Insert ("Hyperion");
-      Check (That => Id_Set_Image_1 = "[Hyperion]",
-             Text => "Set = [Hyperion]");
+      Check (Title    => "One item",
+             Image    => Id_Set_Image_1 (Id_Set),
+             Expected => "[Hyperion]");
 
       Id_Set.Insert ("Endymion");
-      Check (That => Id_Set_Image_1 = "[Hyperion, Endymion]",
-             Text => "Set = [Hyperion, Endymion]");
+      Check (Title    => "Two items",
+             Image    => Id_Set_Image_1 (Id_Set),
+             Expected => "[Hyperion, Endymion]");
 
       Id_Set.Insert ("TechnoCore");
-      Check (That => Id_Set_Image_1 = "[TechnoCore, Hyperion, Endymion]",
-             Text => "Set = [TechnoCore, Hyperion, Endymion]");
-
+      Check (Title    => "More items",
+             Image    => Id_Set_Image_1 (Id_Set),
+             Expected => "[TechnoCore, Hyperion, Endymion]");
    end;
 
-
    -- --------------------------------------------------------------------------
-   Put_Line ("3. Minimal default format instantiation test on a List");
-
+   New_Test ("Minimal default format instantiation test on a List");
    declare
       Int_List : Integer_Lists.List;
 
-      package Default_List_Format is new List_Format;
+      use Integer_Lists;
+      function Iterator (L : List) return
+        List_Iterator_Interfaces.Forward_Iterator'Class is (Iterate (L));
 
-      function Integer_List_Image_2 is new List_Image
-        (Integer,
-         Integer'Image,
-         Integer_Lists.Cursor,
-         Int_List.First,
-         Integer_Lists.Next,
-         Int_List.Length,
-         Integer_Lists.Element,
-         Default_List_Format);
+      function Image (C : Cursor) return String is
+        (Integer'Image (Element (C)));
+
+      function Integer_List_Image_2 is new List_Image.Image
+         (Cursor      => Cursor,
+          Image       => Image,
+          Iterator_If => List_Iterator_Interfaces,
+          Container   => List,
+          Iterator    => Iterator,
+          Format      => List_Image.Default_Format);
    begin
       Int_List.Clear;
-      Check (That => Integer_List_Image_2 = "",
-             Text => "List = """"");
+      Check (Title    => "Empty list",
+             Image    => Integer_List_Image_2 (Int_List),
+             Expected => "");
 
       Int_List.Append (1);
-      Check (That => Integer_List_Image_2 = " 1",
-             Text => "List = 1",
-             Text_If_Failed => Integer_List_Image_2);
+      Check (Title    => "One item",
+             Image    => Integer_List_Image_2 (Int_List),
+             Expected => " 1");
 
       Int_List.Append (2);
-      Check (That => Integer_List_Image_2 = " 1 2",
-             Text => "List = 1 2",
-             Text_If_Failed => Integer_List_Image_2);
+      Check (Title    => "Two items",
+             Image    => Integer_List_Image_2 (Int_List),
+             Expected => " 1,  2");
 
       Int_List.Append (3);
-      Check (That => Integer_List_Image_2 = " 1 2 3",
-             Text => "List = 1 2 3");
-
+      Check (Title           => "More items",
+             Image           => Integer_List_Image_2 (Int_List),
+             Expected        => " 1,  2,  3");
    end;
 
    -- --------------------------------------------------------------------------
-   Put_Line ("4. Sentences");
-
+   New_Test ("Sentences");
    declare
-      package Failed_List_Format is new List_Format
+      package Failed_List_Format is new List_Image.List_Format
         (Prefix            => "Tests ",
          Separator         => ", ",
          Last_Separator    => " and ",
@@ -174,138 +218,138 @@ begin
       Tests_List : Tests_Lists.List;
       use Tests_Lists;
 
-      function Test_List_Image_1 is new List_Image
-        (String,
-         Identity,
-         Tests_Lists.Cursor,
-         Tests_List.First,
-         Tests_Lists.Next,
-         Tests_List.Length,
-         Tests_Lists.Element,
-         Failed_List_Format);
+      function Iterator (L : List) return
+        List_Iterator_Interfaces.Forward_Iterator'Class is (Iterate (L));
+
+      function Test_List_Image_1 is new List_Image.Image
+        (Cursor      => Cursor,
+         Image       => Element,
+         Iterator_If => List_Iterator_Interfaces,
+         Container   => List,
+         Iterator    => Iterator,
+         Format      => Failed_List_Format);
+
    begin
       Tests_List.Clear;
-      Check (That => Test_List_Image_1 = "No test failed",
-             Text => "No test failed",
-             Text_If_Failed => Test_List_Image_1);
+      Check (Title    => "Empty list",
+             Image    => Test_List_Image_1 (Tests_List),
+             Expected => "No test failed");
 
       Tests_List.Append ("test_1");
-      Check (That => Test_List_Image_1 = "Test test_1 fails",
-             Text => "Test test_1 fails",
-             Text_If_Failed => Test_List_Image_1);
+      Check (Title    => "One item",
+             Image    => Test_List_Image_1 (Tests_List),
+             Expected => "Test test_1 fails");
 
       Tests_List.Append ("test_2");
-      Check (That => Test_List_Image_1 = "Tests test_1 and test_2 fail",
-             Text => "Tests test_1 and test_2 fail",
-             Text_If_Failed => Test_List_Image_1);
+      Check (Title    => "Two items",
+             Image    => Test_List_Image_1 (Tests_List),
+             Expected => "Tests test_1 and test_2 fail");
 
       Tests_List.Append ("test_3");
-      Check (That => Test_List_Image_1 = "Tests test_1, test_2 and test_3 fail",
-             Text => "Tests test_1, test_2 and test_3 fail",
-             Text_If_Failed => Test_List_Image_1);
-
+      Check (Title           => "More items",
+             Image           => Test_List_Image_1 (Tests_List),
+             Expected        => "Tests test_1, test_2 and test_3 fail");
    end;
 
    -- --------------------------------------------------------------------------
-   Put_Line ("5. Simple bulleted list");
-
+   New_Test ("Simple bulleted list");
    declare
       Tests_List : Tests_Lists.List;
       use Tests_Lists;
 
-      function Test_List_Image_1 is new List_Image
-        (String,
-         Identity,
-         Tests_Lists.Cursor,
-         Tests_List.First,
-         Tests_Lists.Next,
-         Tests_List.Length,
-         Tests_Lists.Element,
-         Bulleted_List_Format);
+      function Iterator (L : List) return
+        List_Iterator_Interfaces.Forward_Iterator'Class is (Iterate (L));
+
+      function Test_List_Image_1 is new List_Image.Image
+        (Cursor      => Cursor,
+         Image       => Element,
+         Iterator_If => List_Iterator_Interfaces,
+         Container   => List,
+         Iterator    => Iterator,
+         Format      => List_Image.Bulleted_List_Format);
+
+      EOL : constant String := ASCII.CR & ASCII.LF;
+
    begin
       Tests_List.Clear;
-      Check (That           => Test_List_Image_1 = "",
-             Text           => "Test_List_Image_1 = """,
-             Text_If_Failed => Test_List_Image_1);
+      Check (Title           => "Empty list",
+             Image           => Test_List_Image_1 (Tests_List),
+             Expected        => "");
 
       Tests_List.Append ("test_1");
-      Check (That           => Test_List_Image_1 = ASCII.CR & ASCII.LF
-             & "- test_1" & ASCII.CR & ASCII.LF,
-             Text           => "- test_1",
-             Text_If_Failed => Test_List_Image_1);
+      Check (Title           => "One item",
+             Image           => Test_List_Image_1 (Tests_List),
+             Expected        => EOL & "- test_1" & EOL);
 
       Tests_List.Append ("test_2");
-      Check (That           => Test_List_Image_1 = ASCII.CR & ASCII.LF
-             & "- test_1" & ASCII.CR & ASCII.LF
-             & "- test_2" & ASCII.CR & ASCII.LF,
-             Text           => "LF - test_1 LF - test_2 LF",
-             Text_If_Failed => Test_List_Image_1);
+      Check (Title           => "Two items",
+             Image           => Test_List_Image_1 (Tests_List),
+             Expected        => EOL &
+               "- test_1" & EOL &
+               "- test_2" & EOL);
 
       Tests_List.Append ("test_3");
-      Check (That           => Test_List_Image_1 = ASCII.CR & ASCII.LF
-             & "- test_1" & ASCII.CR & ASCII.LF
-             & "- test_2" & ASCII.CR & ASCII.LF
-             & "- test_3" & ASCII.CR & ASCII.LF,
-             Text           => "LF - test_1 LF - test_2 LF - test_3 LF",
-             Text_If_Failed => Test_List_Image_1);
+      Check (Title           => "More items",
+             Image           => Test_List_Image_1 (Tests_List),
+             Expected        => EOL &
+               "- test_1" & EOL &
+               "- test_2" & EOL &
+               "- test_3" & EOL);
    end;
 
    -- --------------------------------------------------------------------------
-   Put_Line ("6. Markdown bulleted list");
-
+   New_Test ("Markdown bulleted list");
    declare
       Tests_List : Tests_Lists.List;
-      use Tests_Lists;
 
-      function Test_List_Image_1 is new List_Image
-        (String,
-         Identity,
-         Tests_Lists.Cursor,
-         Tests_List.First,
-         Tests_Lists.Next,
-         Tests_List.Length,
-         Tests_Lists.Element,
-         Markdown_List_Format);
+      use Tests_Lists;
+      function Iterator (L : List) return
+        List_Iterator_Interfaces.Forward_Iterator'Class is (Iterate (L));
+
+      function Test_List_Image_1 is new List_Image.Image
+        (Cursor      => Cursor,
+         Image       => Element,
+         Iterator_If => List_Iterator_Interfaces,
+         Container   => List,
+         Iterator    => Iterator,
+         Format      => List_Image.Markdown_Bulleted_List_Format);
+
+      EOL : constant String := ASCII.CR & ASCII.LF;
+
    begin
       Tests_List.Clear;
-      Check (That           => Test_List_Image_1 = ASCII.CR & ASCII.LF,
-             Text           => "Test_List_Image_1 = """,
-             Text_If_Failed => Test_List_Image_1);
+      Check (Title    => "Empty list",
+             Image    => Test_List_Image_1 (Tests_List),
+             Expected => EOL);
 
       Tests_List.Append ("test_1");
-      Check (That           => Test_List_Image_1 =
-               ASCII.CR & ASCII.LF & ASCII.CR & ASCII.LF
-             & "- test_1" & ASCII.CR & ASCII.LF & ASCII.CR & ASCII.LF,
-             Text           => "- test_1",
-             Text_If_Failed => Test_List_Image_1);
+      Check (Title    => "One item",
+             Image    => Test_List_Image_1 (Tests_List),
+             Expected => EOL & EOL &
+               "- test_1" & EOL & EOL);
 
       Tests_List.Append ("test_2");
-      Check (That           => Test_List_Image_1 =
-               ASCII.CR & ASCII.LF & ASCII.CR & ASCII.LF
-             & "- test_1" & ASCII.CR & ASCII.LF
-             & "- test_2" & ASCII.CR & ASCII.LF & ASCII.CR & ASCII.LF,
-             Text           => "LF - test_1 LF - test_2 LF",
-             Text_If_Failed => Test_List_Image_1);
+      Check (Title    => "Two items",
+             Image    => Test_List_Image_1 (Tests_List),
+             Expected => EOL & EOL &
+               "- test_1" & EOL &
+               "- test_2" & EOL & EOL);
 
       Tests_List.Append ("test_3");
-      Check (That           => Test_List_Image_1 =
-               ASCII.CR & ASCII.LF & ASCII.CR & ASCII.LF
-             & "- test_1" & ASCII.CR & ASCII.LF
-             & "- test_2" & ASCII.CR & ASCII.LF
-             & "- test_3" & ASCII.CR & ASCII.LF & ASCII.CR & ASCII.LF,
-             Text           => "LF - test_1 LF - test_2 LF - test_3 LF",
-             Text_If_Failed => Test_List_Image_1);
-
+      Check (Title    => "More items",
+             Image    => Test_List_Image_1 (Tests_List),
+             Expected => EOL & EOL &
+               "- test_1" & EOL &
+               "- test_2" & EOL &
+               "- test_3" & EOL & EOL);
    end;
 
    -- --------------------------------------------------------------------------
-   Put_Line ("7. Markdown table line");
-
+   New_Test ("Markdown table lines");
    declare
       L1, L2, L3, L4, L5 : Tests_Lists.List;
-      use Tests_Lists;
 
-      package Markdown_Table_Line is new List_Format
+      package Markdown_Table_Line is new List_Image.List_Format
         (Prefix           => "|",
          Separator        => "|",
          Postfix          => "|",
@@ -313,28 +357,22 @@ begin
          Postfix_If_Empty => "");
       -- Should be named Github Flavored Markdown, as Markdown
       -- don't define tables.
-      function Image (C : Tests_Lists.Cursor) return String is
-      begin
-         return Element (C);
-      end Image;
 
-      function Iterator (L : Tests_Lists.List) return
-        Tests_Lists.List_Iterator_Interfaces.Forward_Iterator'Class is
-      begin
-         return Tests_Lists.List_Iterator_Interfaces.Forward_Iterator'Class
-           (Tests_Lists.Iterate (L));
-      end Iterator;
+      use Tests_Lists;
+      function Iterator (L : List) return
+        List_Iterator_Interfaces.Forward_Iterator'Class is (Iterate (L));
 
-      function Line_Image is new List_Image_2
-        (Cursor              => Tests_Lists.Cursor,
-         Image               => Image,
-         Container           => Tests_Lists.List,
-         Iterator_Interfaces => Tests_Lists.List_Iterator_Interfaces,
-         Iterator            => Iterator,
-         Format              => Markdown_Table_Line);
+      function Image is new List_Image.Image
+        (Cursor      => Cursor,
+         Image       => Element,
+         Iterator_If => List_Iterator_Interfaces,
+         Container   => List,
+         Iterator    => Iterator,
+         Format      => Markdown_Table_Line);
 
    begin
-      Put_Line ("Exemple From http://www.tablesgenerator.com/markdown_tables");
+      Put_Line ("Example From http://www.tablesgenerator.com/markdown_tables");
+
       L1.Append ("Tables");
       L1.Append ("Are");
       L1.Append ("Cool");
@@ -346,25 +384,99 @@ begin
       L3.Append ("$1600");
       L4.Append ("col 2 is");
       L4.Append ("centered");
-      L4.Append (" $12");
+      L4.Append ("$12");
       L5.Append ("col 3 is");
       L5.Append ("right - aligned");
       L5.Append ("$1");
 
+      Check (Title    => "Line 1",
+             Image    => Image (L1),
+             Expected => "|Tables|Are|Cool|");
+      Check (Title    => "Line 2",
+             Image    => Image (L2),
+             Expected => "|----------|:-------------:|------:|");
+      Check (Title    => "Line 3",
+             Image    => Image (L3),
+             Expected => "|col 1 is|left-aligned|$1600|");
+      Check (Title    => "Line 4",
+             Image    => Image (L4),
+             Expected => "|col 2 is|centered|$12|");
+      Check (Title    => "Line 5",
+             Image    => Image (L5),
+             Expected => "|col 3 is|right - aligned|$1|");
+   end;
 
-      Put_Line (Line_Image (L1));
-      Put_Line ("*******************************************");
-      Put_Line (Line_Image (L2));
-      Put_Line (Line_Image (L3));
-      Put_Line (Line_Image (L4));
-      Put_Line (Line_Image (L5));
+   -- --------------------------------------------------------------------------
+   New_Test ("html bulleted list");
+   declare
+      L : Tests_Lists.List;
+
+      use Tests_Lists;
+      function Iterator (L : List) return
+        List_Iterator_Interfaces.Forward_Iterator'Class is (Iterate (L));
+
+      function Image is new List_Image.Image
+        (Cursor      => Cursor,
+         Image       => Element,
+         Iterator_If => List_Iterator_Interfaces,
+         Container   => List,
+         Iterator    => Iterator,
+         Format      => List_Image.HTML_Bulleted_List_Format);
+
+   begin
+      Check (Title    => "Empty list",
+             Image    => Image (L),
+             Expected => "");
+
+      L.Append ("salt");
+      declare
+         Expected : constant String :=
+                      "<ul>" & EOL &
+                      "  <li>salt</li>" & EOL &
+                      "</ul>";
+      begin
+         Check (Title    => "One item",
+                Image    => Image (L),
+                Expected => Expected);
+      end;
+
+      L.Append ("pepper");
+      declare
+         Expected : constant String :=
+                      "<ul>" & EOL &
+                      "  <li>salt</li>" & EOL &
+                      "  <li>pepper</li>" & EOL &
+                      "</ul>";
+      begin
+         Check (Title    => "Two items",
+                Image    => Image (L),
+                Expected => Expected);
+      end;
+
+      L.Append ("sugar");
+      declare
+         Expected : constant String :=
+                      "<ul>" & EOL &
+                      "  <li>salt</li>" & EOL &
+                      "  <li>pepper</li>" & EOL &
+                      "  <li>sugar</li>" & EOL &
+                      "</ul>";
+      begin
+         Check (Title    => "More items",
+                Image    => Image (L),
+                Expected => Expected);
+      end;
 
    end;
 
    -- --------------------------------------------------------------------------
+   New_Line;
    if Failure_Count /= 0 then
       Put_Line (Natural'Image (Failure_Count) & " tests fails.");
       Ada.Command_Line.Set_Exit_Status (Ada.Command_Line.Failure);
+   else
+      Put_Line (Rule);
+      Put_Line ("All tests OK.");
    end if;
 
 end Test_List_Image;
