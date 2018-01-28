@@ -50,7 +50,7 @@ with Ada.Strings.Hash_Case_Insensitive;
          Iterator_If => Set_Iterator_Interfaces,
          Container   => Set,
          Iterator    => Iterate,
-         Style      => List_Image.Bracketed_List_Style);
+         Style       => List_Image.Bracketed_List_Style);
    ...
    Id_Set.Insert ("Salt");
    Id_Set.Insert ("Pepper");
@@ -153,10 +153,15 @@ just set `Postfix` to `" items found"`, and `Postfix_If_Single` to
 And by the way, if you want the Image to be `"No item found"` when the
 list is emtpy, `Prefix_If_Empty` or `Postfix_If_Empty` are here for you.
 
+`Last_Separator` allows to have a different last separator, as in :
+```
+A, B, C and D
+```
+
 Note that Separator may be whatever String.  
 You may want to insert an End
-of Line sequence to split the list on several line, the `EOL` String and
-parameters are provided for that purpose.
+of Line sequence to split the list on several line, the `EOL` default String and formal
+parameter are provided for that purpose.
 ## About
 
 This package was created by Lionel Draghi, and is released under [Apache License v2.0](LICENSE-2.0.md).

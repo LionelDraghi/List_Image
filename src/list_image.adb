@@ -36,8 +36,8 @@ package body List_Image is
          return Style.Prefix_If_Empty & Style.Postfix_If_Empty;
 
       else
-         -- before using the first list item, we need to know if there a second
-         -- item.
+         -- before using the first list item, we need to know if there is
+         -- another one.
          C2 := Iterator_If.Next (I, C1);
 
          if not Iterator_If.Has_Element (C2) then
