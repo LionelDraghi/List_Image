@@ -1,9 +1,20 @@
 -- -----------------------------------------------------------------------------
--- Print_List
--- Copyright (C) 2018 - Lionel Draghi
--- This program is free software;
--- you can redistribute it and/or modify it under the terms of the GNU General
--- Public License Versions 3, refer to the COPYING file.
+-- Copyright 2018 Lionel Draghi
+--
+-- Licensed under the Apache License, Version 2.0 (the "License");
+-- you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at
+--
+--     http://www.apache.org/licenses/LICENSE-2.0
+--
+-- Unless required by applicable law or agreed to in writing, software
+-- distributed under the License is distributed on an "AS IS" BASIS,
+-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and
+-- limitations under the License.
+-- -----------------------------------------------------------------------------
+-- This file is part of the List_Image project
+-- available here https://github.com/LionelDraghi/List_Image
 -- -----------------------------------------------------------------------------
 
 project List_Image is
@@ -25,7 +36,7 @@ project List_Image is
    package Compiler is
       Common_Switches := ("-gnat2012");
       Common_Debug_Switches := Common_Switches &
-      ("-g", "-O0",  "-gnatQ", "-gnatf",  "-gnato", "-fstack-check", "-gnata", "-gnateE", "-gnatVa", "-gnatwa", "-gnatyabefhiklnprtx");
+      ("-g", "-O0",  "-gnatQ", "-gnatf",  "-gnato", "-fstack-check", "-gnata", "-gnateE", "-gnatVa", "-gnatwa", "-gnatyaefhiklnprtxM100");
       -- -gnatQ : Don't quit
       -- -gnatf : Full errors
       -- -gnato : Intermediate overflows to be handled in strict mode.
@@ -37,7 +48,9 @@ project List_Image is
       --
       -- Style checking :
       -- a : Check attribute casing
-      -- b : Blanks not allowed at statement end
+      -- removed b : Blanks not allowed at statement end
+      --         (Because of Markdown processing for comments : double
+      --          final blank is used in MD to force a newline)
       -- e : Check end/exit labels
       -- f : No form feeds or vertical tabs
       -- h : No horizontal tabs
@@ -48,19 +61,21 @@ project List_Image is
       -- p : Check pragma casing
       -- r : Check references
       -- t : Check token spacing
-      --removed  M100 : Set maximum line length
+      -- M100 : Set maximum line length
       -- x : Check extra parentheses.
 
-     for Switches ("ada") use Common_Debug_Switches;
+     for Switches ("ada") use Common_Debug_Switches & "--coverage";
+      -- --coverage = -fprofile-arcs and -ftest-coverage
 
    end Compiler;
 
    package Binder is
-      for Default_Switches ("ada") use ("-E");
+      for Default_Switches ("ada") use ("-Es");
+            -- -Es : store symbolic tracebacks
    end Binder;
 
    package Linker is
-      for Default_Switches ("ada") use ("-g", "-fprofile-generate");
+      for Default_Switches ("ada") use ("-g", "-lgcov", "-fprofile-generate");
    end Linker;
 
    package Pretty_Printer is

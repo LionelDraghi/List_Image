@@ -1,3 +1,22 @@
+-- -----------------------------------------------------------------------------
+-- Copyright 2018 Lionel Draghi
+-- 
+-- Licensed under the Apache License, Version 2.0 (the "License");
+-- you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at
+-- 
+--     http://www.apache.org/licenses/LICENSE-2.0
+-- 
+-- Unless required by applicable law or agreed to in writing, software
+-- distributed under the License is distributed on an "AS IS" BASIS,
+-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and
+-- limitations under the License.
+-- -----------------------------------------------------------------------------
+-- This file is part of the List_Image project
+-- available here https://github.com/LionelDraghi/List_Image
+-- -----------------------------------------------------------------------------
+
 with List_Image;
 
 with Ada.Containers.Doubly_Linked_Lists;
@@ -74,7 +93,7 @@ procedure Test_List_Image is
 
 begin
    -- --------------------------------------------------------------------------
-   New_Test ("Bracketed_List_Format instanciation test on a List");
+   New_Test ("Bracketed_List_Style instanciation test on a List");
    declare
       Int_List : Integer_Lists.List;
 
@@ -91,7 +110,7 @@ begin
          Iterator_If => List_Iterator_Interfaces,
          Container   => List,
          Iterator    => Iterator,
-         Format      => List_Image.Bracketed_List_Format);
+         Style      => List_Image.Bracketed_List_Style);
 
 --        function Integer_List_Image_1 is new List_Image.List_Image_1
 --          (Integer,
@@ -101,7 +120,7 @@ begin
 --           Integer_Lists.Next,
 --           Int_List.Length,
 --           Integer_Lists.Element,
---           List_Image.Bracketed_List_Format);
+--           List_Image.Bracketed_List_Style);
    begin
       Int_List.Clear;
       Check (Title    => "Empty list",
@@ -125,7 +144,7 @@ begin
    end;
 
    -- --------------------------------------------------------------------------
-   New_Test ("Bracketed_List_Format instantiation test on a Set");
+   New_Test ("Bracketed_List_Style instantiation test on a Set");
    declare
       Id_Set : Id_Sets.Set;
 
@@ -137,7 +156,7 @@ begin
          Iterator_If => Set_Iterator_Interfaces,
          Container   => Set,
          Iterator    => Iterate,
-         Format      => List_Image.Bracketed_List_Format);
+         Style      => List_Image.Bracketed_List_Style);
 
    begin
       Id_Set.Clear;
@@ -162,7 +181,7 @@ begin
    end;
 
    -- --------------------------------------------------------------------------
-   New_Test ("Minimal default format instantiation test on a List");
+   New_Test ("Minimal default style instantiation test on a List");
    declare
       Int_List : Integer_Lists.List;
 
@@ -179,7 +198,7 @@ begin
           Iterator_If => List_Iterator_Interfaces,
           Container   => List,
           Iterator    => Iterator,
-          Format      => List_Image.Default_Format);
+          Style      => List_Image.Default_Style);
    begin
       Int_List.Clear;
       Check (Title    => "Empty list",
@@ -205,7 +224,7 @@ begin
    -- --------------------------------------------------------------------------
    New_Test ("Sentences");
    declare
-      package Failed_List_Format is new List_Image.List_Format
+      package Failed_List_Style is new List_Image.List_Style
         (Prefix            => "Tests ",
          Separator         => ", ",
          Last_Separator    => " and ",
@@ -227,7 +246,7 @@ begin
          Iterator_If => List_Iterator_Interfaces,
          Container   => List,
          Iterator    => Iterator,
-         Format      => Failed_List_Format);
+         Style      => Failed_List_Style);
 
    begin
       Tests_List.Clear;
@@ -266,7 +285,7 @@ begin
          Iterator_If => List_Iterator_Interfaces,
          Container   => List,
          Iterator    => Iterator,
-         Format      => List_Image.Bulleted_List_Format);
+         Style      => List_Image.Bulleted_List_Style);
 
       EOL : constant String := ASCII.CR & ASCII.LF;
 
@@ -312,7 +331,7 @@ begin
          Iterator_If => List_Iterator_Interfaces,
          Container   => List,
          Iterator    => Iterator,
-         Format      => List_Image.Markdown_Bulleted_List_Format);
+         Style      => List_Image.Markdown_Bulleted_List_Style);
 
       EOL : constant String := ASCII.CR & ASCII.LF;
 
@@ -349,7 +368,7 @@ begin
    declare
       L1, L2, L3, L4, L5 : Tests_Lists.List;
 
-      package Markdown_Table_Line is new List_Image.List_Format
+      package Markdown_Table_Style is new List_Image.List_Style
         (Prefix           => "|",
          Separator        => "|",
          Postfix          => "|",
@@ -368,7 +387,7 @@ begin
          Iterator_If => List_Iterator_Interfaces,
          Container   => List,
          Iterator    => Iterator,
-         Format      => Markdown_Table_Line);
+         Style      => Markdown_Table_Style);
 
    begin
       Put_Line ("Example From http://www.tablesgenerator.com/markdown_tables");
@@ -421,7 +440,7 @@ begin
          Iterator_If => List_Iterator_Interfaces,
          Container   => List,
          Iterator    => Iterator,
-         Format      => List_Image.HTML_Bulleted_List_Format);
+         Style      => List_Image.HTML_Bulleted_List_Style);
 
    begin
       Check (Title    => "Empty list",
