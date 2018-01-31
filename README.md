@@ -1,4 +1,5 @@
 # List_Image
+
 Ada generic helper to print iterable containers content, with customizable styles.
 
 ## Why?
@@ -14,6 +15,11 @@ was duplicated more time in the code.
 
 Writing a generic function for a specific container is simple, but if I want that generic to be instanciated with whatever [iterable containers](http://www.ada-auth.org/standards/12rm/html/RM-5-5-1.html#I3224) from the Ada standard containers lib (List, Maps and Sets, etc.), it becomes fairly more complex, because of Ada Containers design.
 
+To quote [Emmanuel Briot](http://blog.adacore.com/traits-based-containers) :  
+
+> [Ada predefined] ... containers have a lot of similarity in their APIs. As a result, it is relatively easy to use any of the containers when we are familiar with one of them.  
+> But this does not make it easy to write algorithms that are container agnostic.
+
 ## Usage
 
 The `List_Image` package provides :
@@ -25,10 +31,10 @@ The `List_Image` package provides :
    ```
    The function simply walk through the Container, and gather the image of each element.  
    
-2. The `List_Style` generic package, that is one of the `Image` generic parameters.  
+2. The `Image_Style` generic package, that is one of the `Image` generic parameters.  
    The style of the presentation may be customized in a large way, see examples behind.
 
-3. A collection of predifined `List_Style` instantiation.
+3. A collection of predifined `Image_Style` instantiation.
       
 ### use example
 
@@ -44,13 +50,15 @@ with Ada.Strings.Hash_Case_Insensitive;
    Id_Set : Id_Sets.Set;
 
    use Id_Sets;
-   function Id_Set_Image is new List_Image.Image
-        (Cursor      => Cursor,
-         Image       => Element,
-         Iterator_If => Set_Iterator_Interfaces,
-         Container   => Set,
-         Iterator    => Iterate,
-         Style       => List_Image.Bracketed_List_Style);
+    package Id_Sets_Cursors is new List_Image.Cursors_Signature
+      (Container => Id_Sets.Set,
+       Cursor    => Id_Sets.Cursor);
+
+    function Image (C : Cursor) return String is (Element (C));
+
+    function Id_Set_Image is new List_Image.Image
+      (Cursors => Id_Sets_Cursors,
+       Style   => List_Image.Bracketed_List_Style);
    ...
    Id_Set.Insert ("Salt");
    Id_Set.Insert ("Pepper");
@@ -59,6 +67,7 @@ with Ada.Strings.Hash_Case_Insensitive;
    -- Note the use of the predefined style Bracketed_List_Style.
    -- Image will be [Salt, Pepper]
 ```
+
 ### Predefined styles
 
 - Simple style :
@@ -120,7 +129,7 @@ print the list.
 
       EOL               : String := List_Image.EOL;
 
-   package List_Style is end List_Style;
+   package Image_Style is end Image_Style;
 ```
 
 `Prefix`, `Postfix` and `Separator` parameters are self explaining.  
@@ -158,15 +167,21 @@ list is emtpy, `Prefix_If_Empty` or `Postfix_If_Empty` are here for you.
 A, B, C and D
 ```
 
-Note that Separator may be whatever String.  
-You may want to insert an End
-of Line sequence to split the list on several line, the `EOL` default String and formal
+Both separators may be whatever String.  
+You may want to insert an End of Line sequence to split the list on several line, the `EOL` default String and formal
 parameter are provided for that purpose.
+
 ## About
 
 This package was created by Lionel Draghi, and is released under [Apache License v2.0](LICENSE-2.0.md).
 
-The initial discussion on "iterable containers" is [on comp.lang.ada](https://groups.google.com/d/msg/comp.lang.ada/El_hKSV5SVA/GkyFb27SAAAJ), but it's certainly not the first one.
+Special thanks to Emmanuel Briot and Randy Bruckardt for their help.
+
+## References 
+
+- [The initial discussion on "iterable containers" is on comp.lang.ada](https://groups.google.com/d/msg/comp.lang.ada/El_hKSV5SVA/GkyFb27SAAAJ),
+- [Traits-Based Containers](http://blog.adacore.com/traits-based-containers)
+- [the Generic Ada Library for Algorithms and Containers](https://github.com/AdaCore/ada-traits-containers)
 
 ## Building
 
@@ -179,6 +194,6 @@ To build and run the tests, just :
 
 Only tested on my Linux box, but the sources and tests should run nice on most platform, including windows.  
 The `List_Image` package deals with line terminator for multiline styles.  
-Default value of the `EOL` parameter is CR/LF, but you can change it at `List_Style` instantiation time.
+Default value of the `EOL` parameter is CR/LF, that should be OK for most platforms, but you can change it at `Image_Style` instantiation time.
 
 Lionel

@@ -1,12 +1,12 @@
 -- -----------------------------------------------------------------------------
 -- Copyright 2018 Lionel Draghi
--- 
+--
 -- Licensed under the Apache License, Version 2.0 (the "License");
 -- you may not use this file except in compliance with the License.
 -- You may obtain a copy of the License at
--- 
+--
 --     http://www.apache.org/licenses/LICENSE-2.0
--- 
+--
 -- Unless required by applicable law or agreed to in writing, software
 -- distributed under the License is distributed on an "AS IS" BASIS,
 -- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -98,48 +98,36 @@ begin
       Int_List : Integer_Lists.List;
 
       use Integer_Lists;
-      function Iterator (L : List) return
-        List_Iterator_Interfaces.Forward_Iterator'Class is (Iterate (L));
+      package Integer_Lists_Cursors is new List_Image.Cursors_Signature
+        (Container => List,
+         Cursor    => Cursor);
 
       function Image (C : Cursor) return String is
            (Integer'Image (Element (C)));
 
-      function Integer_List_Image_1 is new List_Image.Image
-        (Cursor      => Cursor,
-         Image       => Image,
-         Iterator_If => List_Iterator_Interfaces,
-         Container   => List,
-         Iterator    => Iterator,
-         Style      => List_Image.Bracketed_List_Style);
+      function Integer_List_Image is new List_Image.Image
+        (Cursors => Integer_Lists_Cursors,
+         Style   => List_Image.Bracketed_List_Style);
 
---        function Integer_List_Image_1 is new List_Image.List_Image_1
---          (Integer,
---           Integer'Image,
---           Integer_Lists.Cursor,
---           Int_List.First,
---           Integer_Lists.Next,
---           Int_List.Length,
---           Integer_Lists.Element,
---           List_Image.Bracketed_List_Style);
    begin
       Int_List.Clear;
       Check (Title    => "Empty list",
-             Image    => Integer_List_Image_1 (Int_List),
+             Image    => Integer_List_Image (Int_List),
              Expected => "[]");
 
       Int_List.Append (1);
       Check (Title    => "One item",
-             Image    => Integer_List_Image_1 (Int_List),
+             Image    => Integer_List_Image (Int_List),
              Expected => "[ 1]");
 
       Int_List.Append (2);
       Check (Title    => "Two items",
-             Image    => Integer_List_Image_1 (Int_List),
+             Image    => Integer_List_Image (Int_List),
              Expected => "[ 1,  2]");
 
       Int_List.Append (3);
       Check (Title    => "More items",
-             Image    => Integer_List_Image_1 (Int_List),
+             Image    => Integer_List_Image (Int_List),
              Expected => "[ 1,  2,  3]");
    end;
 
@@ -149,34 +137,35 @@ begin
       Id_Set : Id_Sets.Set;
 
       use Id_Sets;
+      package Id_Sets_Cursors is new List_Image.Cursors_Signature
+        (Container => Id_Sets.Set,
+         Cursor    => Id_Sets.Cursor);
 
-      function Id_Set_Image_1 is new List_Image.Image
-        (Cursor      => Cursor,
-         Image       => Element,
-         Iterator_If => Set_Iterator_Interfaces,
-         Container   => Set,
-         Iterator    => Iterate,
-         Style      => List_Image.Bracketed_List_Style);
+      function Image (C : Cursor) return String is (Element (C));
+
+      function Id_Set_Image is new List_Image.Image
+        (Cursors => Id_Sets_Cursors,
+         Style   => List_Image.Bracketed_List_Style);
 
    begin
       Id_Set.Clear;
       Check (Title    => "Empty list",
-             Image    => Id_Set_Image_1 (Id_Set),
+             Image    => Id_Set_Image (Id_Set),
              Expected => "[]");
 
       Id_Set.Insert ("Hyperion");
       Check (Title    => "One item",
-             Image    => Id_Set_Image_1 (Id_Set),
+             Image    => Id_Set_Image (Id_Set),
              Expected => "[Hyperion]");
 
       Id_Set.Insert ("Endymion");
       Check (Title    => "Two items",
-             Image    => Id_Set_Image_1 (Id_Set),
+             Image    => Id_Set_Image (Id_Set),
              Expected => "[Hyperion, Endymion]");
 
       Id_Set.Insert ("TechnoCore");
       Check (Title    => "More items",
-             Image    => Id_Set_Image_1 (Id_Set),
+             Image    => Id_Set_Image (Id_Set),
              Expected => "[TechnoCore, Hyperion, Endymion]");
    end;
 
@@ -186,19 +175,18 @@ begin
       Int_List : Integer_Lists.List;
 
       use Integer_Lists;
-      function Iterator (L : List) return
-        List_Iterator_Interfaces.Forward_Iterator'Class is (Iterate (L));
+      package Integer_Lists_Cursors is new List_Image.Cursors_Signature
+        (Container => Integer_Lists.List,
+         Cursor    => Integer_Lists.Cursor);
 
       function Image (C : Cursor) return String is
         (Integer'Image (Element (C)));
 
       function Integer_List_Image_2 is new List_Image.Image
-         (Cursor      => Cursor,
-          Image       => Image,
-          Iterator_If => List_Iterator_Interfaces,
-          Container   => List,
-          Iterator    => Iterator,
-          Style      => List_Image.Default_Style);
+        (Cursors     => Integer_Lists_Cursors,
+         Image       => Image,
+         Style       => List_Image.Default_Style);
+
    begin
       Int_List.Clear;
       Check (Title    => "Empty list",
@@ -224,7 +212,7 @@ begin
    -- --------------------------------------------------------------------------
    New_Test ("Sentences");
    declare
-      package Failed_List_Style is new List_Image.List_Style
+      package Failed_Image_Style is new List_Image.Image_Style
         (Prefix            => "Tests ",
          Separator         => ", ",
          Last_Separator    => " and ",
@@ -237,16 +225,15 @@ begin
       Tests_List : Tests_Lists.List;
       use Tests_Lists;
 
-      function Iterator (L : List) return
-        List_Iterator_Interfaces.Forward_Iterator'Class is (Iterate (L));
+      package Tests_Lists_Cursors is new List_Image.Cursors_Signature
+        (Container => Tests_Lists.List,
+         Cursor    => Tests_Lists.Cursor);
+
+      function Image (C : Cursor) return String is (Element (C));
 
       function Test_List_Image_1 is new List_Image.Image
-        (Cursor      => Cursor,
-         Image       => Element,
-         Iterator_If => List_Iterator_Interfaces,
-         Container   => List,
-         Iterator    => Iterator,
-         Style      => Failed_List_Style);
+        (Cursors => Tests_Lists_Cursors,
+         Style   => Failed_Image_Style);
 
    begin
       Tests_List.Clear;
@@ -276,16 +263,15 @@ begin
       Tests_List : Tests_Lists.List;
       use Tests_Lists;
 
-      function Iterator (L : List) return
-        List_Iterator_Interfaces.Forward_Iterator'Class is (Iterate (L));
+      package Tests_Lists_Cursors is new List_Image.Cursors_Signature
+        (Container => Tests_Lists.List,
+         Cursor    => Tests_Lists.Cursor);
+
+      function Image (C : Cursor) return String is (Element (C));
 
       function Test_List_Image_1 is new List_Image.Image
-        (Cursor      => Cursor,
-         Image       => Element,
-         Iterator_If => List_Iterator_Interfaces,
-         Container   => List,
-         Iterator    => Iterator,
-         Style      => List_Image.Bulleted_List_Style);
+        (Cursors => Tests_Lists_Cursors,
+         Style   => List_Image.Bulleted_List_Style);
 
       EOL : constant String := ASCII.CR & ASCII.LF;
 
@@ -322,16 +308,15 @@ begin
       Tests_List : Tests_Lists.List;
 
       use Tests_Lists;
-      function Iterator (L : List) return
-        List_Iterator_Interfaces.Forward_Iterator'Class is (Iterate (L));
+      package Tests_Lists_Cursors is new List_Image.Cursors_Signature
+        (Container => Tests_Lists.List,
+         Cursor    => Tests_Lists.Cursor);
+
+      function Image (C : Cursor) return String is (Element (C));
 
       function Test_List_Image_1 is new List_Image.Image
-        (Cursor      => Cursor,
-         Image       => Element,
-         Iterator_If => List_Iterator_Interfaces,
-         Container   => List,
-         Iterator    => Iterator,
-         Style      => List_Image.Markdown_Bulleted_List_Style);
+        (Cursors => Tests_Lists_Cursors,
+         Style   => List_Image.Markdown_Bulleted_List_Style);
 
       EOL : constant String := ASCII.CR & ASCII.LF;
 
@@ -368,7 +353,7 @@ begin
    declare
       L1, L2, L3, L4, L5 : Tests_Lists.List;
 
-      package Markdown_Table_Style is new List_Image.List_Style
+      package Markdown_Table_Style is new List_Image.Image_Style
         (Prefix           => "|",
          Separator        => "|",
          Postfix          => "|",
@@ -378,16 +363,15 @@ begin
       -- don't define tables.
 
       use Tests_Lists;
-      function Iterator (L : List) return
-        List_Iterator_Interfaces.Forward_Iterator'Class is (Iterate (L));
+      package Tests_Lists_Cursors is new List_Image.Cursors_Signature
+        (Container => Tests_Lists.List,
+         Cursor    => Tests_Lists.Cursor);
 
-      function Image is new List_Image.Image
-        (Cursor      => Cursor,
-         Image       => Element,
-         Iterator_If => List_Iterator_Interfaces,
-         Container   => List,
-         Iterator    => Iterator,
-         Style      => Markdown_Table_Style);
+      function Image (C : Cursor) return String is (Element (C));
+
+      function List_Image is new List_Image.Image
+        (Cursors => Tests_Lists_Cursors,
+         Style   => Markdown_Table_Style);
 
    begin
       Put_Line ("Example From http://www.tablesgenerator.com/markdown_tables");
@@ -409,19 +393,19 @@ begin
       L5.Append ("$1");
 
       Check (Title    => "Line 1",
-             Image    => Image (L1),
+             Image    => List_Image (L1),
              Expected => "|Tables|Are|Cool|");
       Check (Title    => "Line 2",
-             Image    => Image (L2),
+             Image    => List_Image (L2),
              Expected => "|----------|:-------------:|------:|");
       Check (Title    => "Line 3",
-             Image    => Image (L3),
+             Image    => List_Image (L3),
              Expected => "|col 1 is|left-aligned|$1600|");
       Check (Title    => "Line 4",
-             Image    => Image (L4),
+             Image    => List_Image (L4),
              Expected => "|col 2 is|centered|$12|");
       Check (Title    => "Line 5",
-             Image    => Image (L5),
+             Image    => List_Image (L5),
              Expected => "|col 3 is|right - aligned|$1|");
    end;
 
@@ -431,20 +415,19 @@ begin
       L : Tests_Lists.List;
 
       use Tests_Lists;
-      function Iterator (L : List) return
-        List_Iterator_Interfaces.Forward_Iterator'Class is (Iterate (L));
+      package Tests_Lists_Cursors is new List_Image.Cursors_Signature
+        (Container => List,
+         Cursor    => Cursor);
 
-      function Image is new List_Image.Image
-        (Cursor      => Cursor,
-         Image       => Element,
-         Iterator_If => List_Iterator_Interfaces,
-         Container   => List,
-         Iterator    => Iterator,
-         Style      => List_Image.HTML_Bulleted_List_Style);
+      function Image (C : Cursor) return String is (Element (C));
+
+      function List_Image is new List_Image.Image
+        (Cursors => Tests_Lists_Cursors,
+         Style   => List_Image.HTML_Bulleted_List_Style);
 
    begin
       Check (Title    => "Empty list",
-             Image    => Image (L),
+             Image    => List_Image (L),
              Expected => "");
 
       L.Append ("salt");
@@ -455,7 +438,7 @@ begin
                       "</ul>";
       begin
          Check (Title    => "One item",
-                Image    => Image (L),
+                Image    => List_Image (L),
                 Expected => Expected);
       end;
 
@@ -468,7 +451,7 @@ begin
                       "</ul>";
       begin
          Check (Title    => "Two items",
-                Image    => Image (L),
+                Image    => List_Image (L),
                 Expected => Expected);
       end;
 
@@ -482,7 +465,7 @@ begin
                       "</ul>";
       begin
          Check (Title    => "More items",
-                Image    => Image (L),
+                Image    => List_Image (L),
                 Expected => Expected);
       end;
 
