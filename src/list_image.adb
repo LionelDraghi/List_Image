@@ -45,20 +45,20 @@ package body List_Image is
 
          else
             -- at least two item in the list
-            Tmp := To_Unbounded_String (Style.Prefix)
-              & To_Unbounded_String (Image (C1));
+            Tmp := To_Unbounded_String (Style.Prefix);
+            Append (Tmp, Image (C1));
             loop
                C1 := C2;
                C2 := Next (C2);
                if Has_Element (C2) then
                   -- C1 do not yet point the last item
-                  Tmp := Tmp & Style.Separator
-                    & To_Unbounded_String (Image (C1));
+                  Append (Tmp, Style.Separator);
+                  Append (Tmp, Image (C1));
 
                else
                   -- C1 point the last item
-                  Tmp := Tmp & Style.Last_Separator
-                    & To_Unbounded_String (Image (C1));
+                  Append (Tmp, Style.Last_Separator);
+                  Append (Tmp, Image (C1));
                   exit;
 
                end if;
@@ -68,7 +68,9 @@ package body List_Image is
          end if;
 
       end if;
-      return (To_String (Tmp & Style.Postfix));
+
+      Append (Tmp, Style.Postfix);
+      return To_String (Tmp);
 
    end Image;
 
