@@ -11,7 +11,7 @@ The same loop that print containers content with a presentation more or less clo
 [A, B, C]
 ```
 
-was duplicated more time in the code.
+was duplicated more times in the code.
 
 Writing a generic function for a specific container is simple, but if I want that generic to be instanciated with whatever [iterable containers](http://www.ada-auth.org/standards/12rm/html/RM-5-5-1.html#I3224) from the Ada standard containers lib (List, Maps and Sets, etc.), it becomes fairly more complex, because of Ada Containers design.
 
