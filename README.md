@@ -1,6 +1,26 @@
-# List_Image
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
+List_Image
+==========
 
 Ada generic helper to print iterable containers content, with customizable styles.
+
+------------------------------------------------------------------------
+
+Table of Contents
+-----------------
+
+* [Why?](#why)
+* [Usage](#usage)
+  * [use example](#use-example)
+  * [Predefined styles](#predefined-styles)
+  * [Defining your own style](#defining-your-own-style)
+* [About](#about)
+* [References](#references)
+* [Building](#building)
+* [Portability](#portability)
+
+------------------------------------------------------------------------
 
 ## Why?
 

@@ -36,15 +36,17 @@ project List_Image is
    package Compiler is
       Common_Switches := ("-gnat2012");
       Common_Debug_Switches := Common_Switches &
-      ("-g", "-O0",  "-gnatQ", "-gnatf",  "-gnato", "-fstack-check", "-gnata", "-gnateE", "-gnatVa", "-gnatwa", "-gnatyaefhiklnprtxM100");
-      -- -gnatQ : Don't quit
-      -- -gnatf : Full errors
-      -- -gnato : Intermediate overflows to be handled in strict mode.
+      ("-g", "-O0",  "-gnatQ", "-gnatf",
+       "-gnato", "-fstack-check", "-gnata",
+       "-gnateE", "-gnatVa", "-gnatwae", "-gnatyaefhiklnprtxM80");
+      -- -gnatQ   : Don't quit
+      -- -gnatf   : Full errors
+      -- -gnato   : Intermediate overflows to be handled in strict mode.
       -- -fstack-check : stack checking
-      -- -gnata : assertions
-      -- -gnateE : extra infos in exception messages
-      -- -gnatVa : all validity checks
-      -- -gnatwa : activate most optional warning messages
+      -- -gnata   : assertions
+      -- -gnateE  : extra infos in exception messages
+      -- -gnatVa  : all validity checks
+      -- -gnatwae : activate most optional warning messages, and treat warnings as errors
       --
       -- Style checking :
       -- a : Check attribute casing
@@ -61,7 +63,7 @@ project List_Image is
       -- p : Check pragma casing
       -- r : Check references
       -- t : Check token spacing
-      -- M100 : Set maximum line length
+      -- M : Set maximum line length
       -- x : Check extra parentheses.
 
      for Switches ("ada") use Common_Debug_Switches & "--coverage";
@@ -75,7 +77,7 @@ project List_Image is
    end Binder;
 
    package Linker is
-      for Default_Switches ("ada") use ("-g", "-lgcov", "-fprofile-generate");
+      for Default_Switches ("ada") use ("-g", "-lgcov", "-fprofile-arcs");
    end Linker;
 
    package Pretty_Printer is
