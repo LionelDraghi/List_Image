@@ -7,7 +7,7 @@ Ada generic helper to print iterable containers content, with customizable style
 
 ------------------------------------------------------------------------
 
-**Table of Contents**
+## Table of Contents
 
 * [Why?](#why)
 * [Usage](#usage)
@@ -21,7 +21,7 @@ Ada generic helper to print iterable containers content, with customizable style
 
 ------------------------------------------------------------------------
 
-# Why?
+## Why?
 
 This started with a simple idea in mind : removing duplicate code in [ArchiCheck](http://lionel.draghi.free.fr/Archicheck/index.html). 
 The same loop that print containers content with a presentation more or less close to
@@ -39,7 +39,7 @@ To quote [Emmanuel Briot](http://blog.adacore.com/traits-based-containers) :
 > [Ada predefined] ... containers have a lot of similarity in their APIs. As a result, it is relatively easy to use any of the containers when we are familiar with one of them.  
 > But this does not make it easy to write algorithms that are container agnostic.
 
-# Usage
+## Usage
 
 The `List_Image` package provides :
 
@@ -55,7 +55,7 @@ The `List_Image` package provides :
 
 3. A collection of predifined `Image_Style` instantiation.
       
-## use example
+### use example
 
 ```Ada
 with List_Image;
@@ -87,7 +87,7 @@ with Ada.Strings.Hash_Case_Insensitive;
    -- Image will be [Salt, Pepper]
 ```
 
-## Predefined styles
+### Predefined styles
 
 - Simple style :
   ```
@@ -130,7 +130,7 @@ with Ada.Strings.Hash_Case_Insensitive;
   Note : Markdown don't define tables, but it's a common extension,
          like in Github Flavored Markdown for example.
 
-## Defining your own style
+### Defining your own style
 
 This signature package defines the style used by the Image function to
 print the list.  
@@ -190,26 +190,26 @@ Both separators may be whatever String.
 You may want to insert an End of Line sequence to split the list on several line, the `EOL` default String and formal
 parameter are provided for that purpose.
 
-# About
+## About
 
 This package was created by Lionel Draghi, and is released under [Apache License v2.0](LICENSE-2.0.md).
 
 Special thanks to Emmanuel Briot and Randy Bruckardt for their help.
 
-# References 
+## References 
 
 - [The initial discussion on "iterable containers" is on comp.lang.ada](https://groups.google.com/d/msg/comp.lang.ada/El_hKSV5SVA/GkyFb27SAAAJ),
 - [Traits-Based Containers](http://blog.adacore.com/traits-based-containers)
 - [the Generic Ada Library for Algorithms and Containers](https://github.com/AdaCore/ada-traits-containers)
 
-# Building
+## Building
 
 Get the sources [on the GitHub project page](https://github.com/LionelDraghi/List_Image)  
 
 To build and run the tests, just :
 > make
 
-# Portability
+## Portability
 
 Only tested on my Linux box, but the sources and tests should run nice on most platform, including windows.  
 The `List_Image` package deals with line terminator for multiline styles.  
