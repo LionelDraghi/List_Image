@@ -14,10 +14,12 @@
 -- limitations under the License.
 -- -----------------------------------------------------------------------------
 -- This file is part of the List_Image project
--- available here https://github.com/LionelDraghi/List_Image
+-- available at https://github.com/LionelDraghi/List_Image
 -- -----------------------------------------------------------------------------
 
 with List_Image;
+with List_Image.Windows_Predefined_Styles;
+with List_Image.Unix_Predefined_Styles;
 
 with Ada.Containers.Doubly_Linked_Lists;
 with Ada.Containers.Indefinite_Doubly_Linked_Lists;
@@ -88,8 +90,6 @@ procedure Test_List_Image is
    -- container 3
    package Tests_Lists is new Ada.Containers.Indefinite_Doubly_Linked_Lists
      (String);
-
-   EOL : constant String := ASCII.CR & ASCII.LF;
 
 begin
    -- --------------------------------------------------------------------------
@@ -271,9 +271,9 @@ begin
 
       function Test_List_Image_1 is new List_Image.Image
         (Cursors => Tests_Lists_Cursors,
-         Style   => List_Image.Bulleted_List_Style);
+         Style   => List_Image.Unix_Predefined_Styles.Bulleted_List_Style);
 
-      EOL : constant String := ASCII.CR & ASCII.LF;
+      EOL : constant String := (1 => ASCII.LF);
 
    begin
       Tests_List.Clear;
@@ -314,11 +314,19 @@ begin
 
       function Image (C : Cursor) return String is (Element (C));
 
+      use List_Image;
+      package Unix_Markdown_Bulleted_List_Style is new Image_Style
+        (Prefix           => Unix_EOL & Unix_EOL & "- ",
+         Separator        => Unix_EOL & "- ",
+         Postfix          => Unix_EOL & Unix_EOL,
+         Prefix_If_Empty  => Unix_EOL,
+         Postfix_If_Empty => "");
+      
       function Test_List_Image_1 is new List_Image.Image
         (Cursors => Tests_Lists_Cursors,
-         Style   => List_Image.Markdown_Bulleted_List_Style);
+         Style   => Unix_Markdown_Bulleted_List_Style);
 
-      EOL : constant String := ASCII.CR & ASCII.LF;
+      EOL : constant String := LF_EOL;
 
    begin
       Tests_List.Clear;
@@ -421,10 +429,13 @@ begin
 
       function Image (C : Cursor) return String is (Element (C));
 
+      EOL : constant String := List_Image.Windows_EOL;
+      
       function List_Image is new List_Image.Image
         (Cursors => Tests_Lists_Cursors,
-         Style   => List_Image.HTML_Bulleted_List_Style);
-
+         Style   => 
+            List_Image.Windows_Predefined_Styles.HTML_Bulleted_List_Style);
+   
    begin
       Check (Title    => "Empty list",
              Image    => List_Image (L),

@@ -9,15 +9,17 @@ Ada generic helper to print iterable containers content, with customizable style
 
 ## Table of Contents
 
-* [Why?](#why)
-* [Usage](#usage)
-  * [use example](#use-example)
-  * [Predefined styles](#predefined-styles)
-  * [Defining your own style](#defining-your-own-style)
-* [About](#about)
-* [References](#references)
-* [Building](#building)
-* [Portability](#portability)
+  - [Why?](#why)
+  - [Usage](#usage)
+    - [use example](#use-example)
+    - [Predefined styles](#predefined-styles)
+      - [Single Line styles](#single-line-styles)
+      - [Multi Line styles](#multi-line-styles)
+    - [Defining your own style](#defining-your-own-style)
+  - [About](#about)
+  - [References](#references)
+  - [Building](#building)
+  - [Portability](#portability)
 
 ------------------------------------------------------------------------
 
@@ -54,6 +56,7 @@ The `List_Image` package provides :
    The style of the presentation may be customized in a large way, see examples behind.
 
 3. A collection of predifined `Image_Style` instantiation.
+   
       
 ### use example
 
@@ -89,6 +92,10 @@ with Ada.Strings.Hash_Case_Insensitive;
 
 ### Predefined styles
 
+#### Single Line styles
+
+Those instantiations are provided in the `List_Image` package.
+
 - Simple style :
   ```
   A, B, C
@@ -99,6 +106,20 @@ with Ada.Strings.Hash_Case_Insensitive;
   [A, B, C]
   ```
 
+- Markdown_Table_Style
+  ```
+  | A | B | C |
+  ```
+  Note : Markdown don't define tables, but it's a common extension,
+         like in Github Flavored Markdown for example.
+
+#### Multi Line styles
+
+Those instantiations are dependent on the platform definition of an End of Line.
+There is no standard way in Ada to know at run time what is the standard EOL.
+Therefore, Styles depending on this EOL definition are provided in plateform 
+specific packages, currently `List_Image.Unix_Predefined_Styles` and `List_Image.Windows_Predefined_Styles`.
+
 - Bulleted :
   ```
   - A
@@ -106,7 +127,8 @@ with Ada.Strings.Hash_Case_Insensitive;
   - C
   ```
 
- - Markdown bulleted list : like the bulleted list, but surrounded by
+ - Markdown bulleted list :  
+   like the bulleted list, but surrounded by
    two empty lines (in some Markdown implementation, if the first bullet
    is not preceded by an empty line, the list is not recognized)
 
@@ -121,14 +143,7 @@ with Ada.Strings.Hash_Case_Insensitive;
   Note : an empty list `<ul></ul>` is recognized by most navigator,
          but seems to be illegal html.
          No problem here, thanks to the _If_Empty parameters nothing will
-         be generated if the list is emty.
-   
-- Markdown_Table_Style
-  ```
-  | A | B | C |
-  ```
-  Note : Markdown don't define tables, but it's a common extension,
-         like in Github Flavored Markdown for example.
+         be generated if the list is empty.
 
 ### Defining your own style
 
@@ -201,6 +216,7 @@ Special thanks to Emmanuel Briot and Randy Bruckardt for their help.
 - [The initial discussion on "iterable containers" is on comp.lang.ada](https://groups.google.com/d/msg/comp.lang.ada/El_hKSV5SVA/GkyFb27SAAAJ),
 - [Traits-Based Containers](http://blog.adacore.com/traits-based-containers)
 - [the Generic Ada Library for Algorithms and Containers](https://github.com/AdaCore/ada-traits-containers)
+- [The EOL miss and mess in Ada](https://groups.google.com/d/msg/comp.lang.ada/qHub0JlY0dk/OwWmkj3BAgAJ)
 
 ## Building
 
@@ -212,7 +228,5 @@ To build and run the tests, just :
 ## Portability
 
 Only tested on my Linux box, but the sources and tests should run nice on most platform, including windows.  
-The `List_Image` package deals with line terminator for multiline styles.  
-Default value of the `EOL` parameter is CR/LF, that should be OK for most platforms, but you can change it at `Image_Style` instantiation time.
 
 Lionel

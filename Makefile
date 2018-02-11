@@ -14,7 +14,7 @@
 # limitations under the License.
 # -----------------------------------------------------------------------------
 # This file is part of the List_Image project
-# available here https://github.com/LionelDraghi/List_Image
+# available at https://github.com/LionelDraghi/List_Image
 # -----------------------------------------------------------------------------
 
 .SILENT:
@@ -27,11 +27,20 @@ build:
 	echo
 
 check: ./test_list_image
+	echo --- check that both Unix/Windows child packages are identical:
+	sed "s/Windows_/Unix_/" src/list_image-windows_predefined_styles.ads > tmp.ads 
+	diff tmp.ads src/list_image-unix_predefined_styles.ads 
+	echo OK
+	echo	
+
+	# run tests
 	echo --- tests:
 	./test_list_image
 	echo
-
+	
 .PHONY : clean
 clean:
 	echo --- clean:
-	- gnat clean -P list_image.gpr
+	- gnat clean -q -P list_image.gpr
+	- rm -f tmp.ads
+	echo OK

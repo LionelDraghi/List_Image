@@ -14,14 +14,10 @@
 -- limitations under the License.
 -- -----------------------------------------------------------------------------
 -- This file is part of the List_Image project
--- available here https://github.com/LionelDraghi/List_Image
+-- available at https://github.com/LionelDraghi/List_Image
 -- -----------------------------------------------------------------------------
 
 package List_Image is
-
-   EOL : constant String := ASCII.CR & ASCII.LF;
-   -- This should be OK with most systems, but it may be overloaded
-   -- in the Style instantiation.
 
    -- --------------------------------------------------------------------------
    --                               Style
@@ -53,6 +49,7 @@ package List_Image is
    -- Note that Separator may be whatever String. You may want to insert an End
    -- of Line sequence to split the list on several line, the EOL String and
    -- parameters are provided for that purpose.
+   -- --------------------------------------------------------------------------
 
    generic
       Prefix    : String := "";
@@ -65,13 +62,16 @@ package List_Image is
       Prefix_If_Single  : String := Prefix;
       Postfix_If_Single : String := Postfix;
 
-      EOL               : String := List_Image.EOL;
+      EOL               : String := "";
 
    package Image_Style is end Image_Style;
 
    -- --------------------------------------------------------------------------
-   --                         Predefined style
+   --                     Predefined single line styles
    -- --------------------------------------------------------------------------
+   --
+   -- Predefined **single line** styles (that are not relying on EOL
+   -- definition), and are not plateform specific, are proposed here after.
    --
    -- - Default_Style :
    --   > A, B, C
@@ -82,27 +82,6 @@ package List_Image is
    -- - Bracketed_List_Style :
    --   > [A, B, C]
    --
-   -- - Bulleted_List_Style :
-   --   > - A
-   --   > - B
-   --   > - C
-   --
-   -- - Markdown_Bulleted_List_Style :
-   --   Like the bulleted list, but surrounded by
-   --   two empty lines (in some Markdown implementation, if the first bullet
-   --   is not preceded by an empty line, the list is not recognized)
-   --
-   -- - HTML_Bulleted_List_Style :
-   --   > <ul>
-   --   > <li>A</li>
-   --   > <li>B</li>
-   --   > <li>C</li>
-   --   > </ul>
-   --   Note : <ul></ul>, an empty list, is recognized by most navigator,
-   --          but seems to be illegal html.
-   --          No problem here, thanks to _If_Empty parameters nothing will
-   --          be generated if the list is emty.
-   --
    -- - Markdown_Table_Style :
    --   > | A | B | C |
    --   Note : Markdown don't define tables, but it's a common extension,
@@ -112,32 +91,11 @@ package List_Image is
    package Default_Style is new Image_Style (Separator => ", ");
 
    package English_Style is new Image_Style (Separator      => ", ",
-                                            Last_Separator => " and ");
+                                             Last_Separator => " and ");
 
    package Bracketed_List_Style is new Image_Style (Prefix    => "[",
-                                                   Postfix   => "]",
-                                                   Separator => ", ");
-
-   package Bulleted_List_Style is new Image_Style
-     (Prefix           => EOL & "- ",
-      Separator        => EOL & "- ",
-      Postfix          => EOL,
-      Prefix_If_Empty  => "",
-      Postfix_If_Empty => "");
-
-   package Markdown_Bulleted_List_Style is new Image_Style
-     (Prefix           => EOL & EOL & "- ",
-      Separator        => EOL & "- ",
-      Postfix          => EOL & EOL,
-      Prefix_If_Empty  => EOL,
-      Postfix_If_Empty => "");
-
-   package HTML_Bulleted_List_Style is new Image_Style
-     (Prefix           => "<ul>"  & EOL & "  <li>",
-      Separator        => "</li>" & EOL & "  <li>",
-      Postfix          => "</li>" & EOL & "</ul>",
-      Prefix_If_Empty  => "",
-      Postfix_If_Empty => "");
+                                                    Postfix   => "]",
+                                                    Separator => ", ");
 
    package Markdown_Table_Style is new List_Image.Image_Style
      (Prefix           => "|",
@@ -145,6 +103,31 @@ package List_Image is
       Postfix          => "|",
       Prefix_If_Empty  => "",
       Postfix_If_Empty => "");
+
+   -- --------------------------------------------------------------------------
+   --                     Predefined Multi-Lines styles
+   -- --------------------------------------------------------------------------
+   --
+   -- Predefined (platform dependent) **multi lines** styles
+   -- are proposed in the following child packages :
+   -- - List_Image.Unix_Predefined_Styles
+   -- - List_Image.Windows_Predefined_Styles
+   --
+   -- Common line terminator definitions are provided here for convenience,
+   -- as there is no easy and standard way in Ada to get the right EOL
+   -- terminator on the current platform (supposing there is one on the
+   -- targeted platform).
+   --
+   -- --------------------------------------------------------------------------
+
+   -- Predefined EOL are (terminator explicit) :
+   LF_EOL      : constant String := (1 => ASCII.LF);
+   CRLF_EOL    : constant String := ASCII.CR & ASCII.LF;
+
+   -- or (platform explicit) :
+   Unix_EOL    : constant String := LF_EOL;
+   Windows_EOL : constant String := CRLF_EOL;
+
 
    -- --------------------------------------------------------------------------
    --                             Cursors

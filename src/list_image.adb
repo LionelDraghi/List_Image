@@ -14,7 +14,7 @@
 -- limitations under the License.
 -- -----------------------------------------------------------------------------
 -- This file is part of the List_Image project
--- available here https://github.com/LionelDraghi/List_Image
+-- available at https://github.com/LionelDraghi/List_Image
 -- -----------------------------------------------------------------------------
 
 with Ada.Strings.Unbounded;
