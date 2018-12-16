@@ -72,15 +72,15 @@ with Ada.Strings.Hash_Case_Insensitive;
    Id_Set : Id_Sets.Set;
 
    use Id_Sets;
-    package Id_Sets_Cursors is new List_Image.Cursors_Signature
-      (Container => Id_Sets.Set,
-       Cursor    => Id_Sets.Cursor);
+   package Id_Sets_Cursors is new List_Image.Cursors_Signature
+     (Container => Id_Sets.Set,
+      Cursor    => Id_Sets.Cursor);
 
-    function Image (C : Cursor) return String is (Element (C));
+   function Image (C : Cursor) return String is (Element (C));
 
-    function Id_Set_Image is new List_Image.Image
-      (Cursors => Id_Sets_Cursors,
-       Style   => List_Image.Bracketed_List_Style);
+   function Id_Set_Image is new List_Image.Image
+     (Cursors => Id_Sets_Cursors,
+      Style   => List_Image.Bracketed_List_Style);
    ...
    Id_Set.Insert ("Salt");
    Id_Set.Insert ("Pepper");
@@ -106,7 +106,7 @@ Those instantiations are provided in the `List_Image` package.
   [A, B, C]
   ```
 
-- Markdown_Table_Style
+- Markdown table style :
   ```
   | A | B | C |
   ```
@@ -161,7 +161,7 @@ print the list.
       Prefix_If_Single  : String := Prefix;
       Postfix_If_Single : String := Postfix;
 
-      EOL               : String := List_Image.EOL;
+      EOL               : String := "";
 
    package Image_Style is end Image_Style;
 ```

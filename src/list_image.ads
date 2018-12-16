@@ -121,7 +121,7 @@ package List_Image is
    -- --------------------------------------------------------------------------
 
    -- Predefined EOL are (terminator explicit) :
-   LF_EOL      : constant String := (1 => ASCII.LF);
+   LF_EOL      : constant String := [1 => ASCII.LF];
    CRLF_EOL    : constant String := ASCII.CR & ASCII.LF;
 
    -- or (platform explicit) :

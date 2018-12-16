@@ -34,7 +34,7 @@ project List_Image is
    end Builder;
 
    package Compiler is
-      Common_Switches := ("-gnat2012");
+      Common_Switches := ("-gnat2022");
       Common_Debug_Switches := Common_Switches &
       ("-g", "-O0",  "-gnatQ", "-gnatf",
        "-gnato", "-fstack-check", "-gnata",

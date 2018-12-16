@@ -273,7 +273,7 @@ begin
         (Cursors => Tests_Lists_Cursors,
          Style   => List_Image.Unix_Predefined_Styles.Bulleted_List_Style);
 
-      EOL : constant String := (1 => ASCII.LF);
+      EOL : constant String := [1 => ASCII.LF];
 
    begin
       Tests_List.Clear;
