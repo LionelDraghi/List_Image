@@ -129,7 +129,7 @@ specific packages, currently `List_Image.Unix_Predefined_Styles` and `List_Image
 
  - Markdown bulleted list :  
    like the bulleted list, but surrounded by
-   two empty lines (in some Markdown implementation, if the first bullet
+   two empty lines (in some Markdown implementations, if the first bullet
    is not preceded by an empty line, the list is not recognized)
 
 - HTML bulleted list :
@@ -177,7 +177,7 @@ ABCD
 ```
 Special Prefix and Postfix are possible for null list, and for list with
 a single element.  
-This is usefull when you want to want `[A,B,C]` as an image, but you
+This is usefull when you want `[A,B,C]` as an image, but you
 want an empty string (and not `[]`) when the list is empty.
 
 An interresting application of this feature is to have well written comments
