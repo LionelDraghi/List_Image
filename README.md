@@ -9,7 +9,11 @@ Ada generic helper to print iterable containers content, with customizable style
 
 ## Table of Contents
 
+- [List\_Image](#list_image)
+  - [Table of Contents](#table-of-contents)
   - [Why?](#why)
+    - [Ada 2022](#ada-2022)
+  - [Versions](#versions)
   - [Usage](#usage)
     - [use example](#use-example)
     - [Predefined styles](#predefined-styles)
@@ -34,12 +38,23 @@ The same loop that print containers content with a presentation more or less clo
 
 was duplicated more times in the code.
 
-Writing a generic function for a specific container is simple, but if I want that generic to be instanciated with whatever [iterable containers](http://www.ada-auth.org/standards/12rm/html/RM-5-5-1.html#I3224) from the Ada standard containers lib (List, Maps and Sets, etc.), it becomes fairly more complex, because of Ada Containers design.
+Writing a generic function for a specific container is simple, but if I want that generic to be instantiated with whatever [iterable containers](http://www.ada-auth.org/standards/12rm/html/RM-5-5-1.html#I3224) from the Ada standard containers lib (List, Maps and Sets, etc.), it becomes fairly more complex, because of Ada Containers design.
 
 To quote [Emmanuel Briot](http://blog.adacore.com/traits-based-containers) :  
 
 > [Ada predefined] ... containers have a lot of similarity in their APIs. As a result, it is relatively easy to use any of the containers when we are familiar with one of them.  
 > But this does not make it easy to write algorithms that are container agnostic.
+
+### Ada 2022
+[Ada 2022 generalized `'Image` for all types](http://ada-auth.org/standards/22over/html/Ov22-7-1.html). This is a very fortunate evolution, that removes completely one of the main use-case for `List_Image`, that is just debugging : if your're OK with the default Bracketed style of `'Image`, just use it.  
+
+As a consequence, `List_Image` no more provide the `Bracketed_List_Style` generic instantiation in the [versions following 2.0.0](https://github.com/LionelDraghi/List_Image/tree/2.0.0).  
+
+## Versions
+
+- [Version 1.x.x](https://github.com/LionelDraghi/List_Image/tree/1.0.0) is stable, and the last compatible with Ada2012. 
+
+- [Version 2.x.x](https://github.com/LionelDraghi/List_Image/tree/2.0.0) may change in incompatible ways to explore Ada 2022 consequences. Removing the `Bracketed_List_Style` generic instantiation is an example.
 
 ## Usage
 
@@ -55,7 +70,7 @@ The `List_Image` package provides :
 2. The `Image_Style` generic package, that is one of the `Image` generic parameters.  
    The style of the presentation may be customized in a large way, see examples behind.
 
-3. A collection of predifined `Image_Style` instantiation.
+3. A collection of predefined `Image_Style` instantiation.
    
       
 ### use example
@@ -72,15 +87,15 @@ with Ada.Strings.Hash_Case_Insensitive;
    Id_Set : Id_Sets.Set;
 
    use Id_Sets;
-    package Id_Sets_Cursors is new List_Image.Cursors_Signature
-      (Container => Id_Sets.Set,
-       Cursor    => Id_Sets.Cursor);
+   package Id_Sets_Cursors is new List_Image.Cursors_Signature
+     (Container => Id_Sets.Set,
+      Cursor    => Id_Sets.Cursor);
 
-    function Image (C : Cursor) return String is (Element (C));
+   function Image (C : Cursor) return String is (Element (C));
 
-    function Id_Set_Image is new List_Image.Image
-      (Cursors => Id_Sets_Cursors,
-       Style   => List_Image.Bracketed_List_Style);
+   function Id_Set_Image is new List_Image.Image
+     (Cursors => Id_Sets_Cursors,
+      Style   => List_Image.Bracketed_List_Style);
    ...
    Id_Set.Insert ("Salt");
    Id_Set.Insert ("Pepper");
@@ -106,7 +121,7 @@ Those instantiations are provided in the `List_Image` package.
   [A, B, C]
   ```
 
-- Markdown_Table_Style
+- Markdown table style :
   ```
   | A | B | C |
   ```
@@ -117,7 +132,7 @@ Those instantiations are provided in the `List_Image` package.
 
 Those instantiations are dependent on the platform definition of an End of Line.
 There is no standard way in Ada to know at run time what is the standard EOL.
-Therefore, Styles depending on this EOL definition are provided in plateform 
+Therefore, Styles depending on this EOL definition are provided in platform 
 specific packages, currently `List_Image.Unix_Predefined_Styles` and `List_Image.Windows_Predefined_Styles`.
 
 - Bulleted :
@@ -129,7 +144,7 @@ specific packages, currently `List_Image.Unix_Predefined_Styles` and `List_Image
 
  - Markdown bulleted list :  
    like the bulleted list, but surrounded by
-   two empty lines (in some Markdown implementation, if the first bullet
+   two empty lines (in some Markdown implementations, if the first bullet
    is not preceded by an empty line, the list is not recognized)
 
 - HTML bulleted list :
@@ -161,7 +176,7 @@ print the list.
       Prefix_If_Single  : String := Prefix;
       Postfix_If_Single : String := Postfix;
 
-      EOL               : String := List_Image.EOL;
+      EOL               : String := "";
 
    package Image_Style is end Image_Style;
 ```
@@ -177,10 +192,10 @@ ABCD
 ```
 Special Prefix and Postfix are possible for null list, and for list with
 a single element.  
-This is usefull when you want to want `[A,B,C]` as an image, but you
+This is useful when you want `[A,B,C]` as an image, but you
 want an empty string (and not `[]`) when the list is empty.
 
-An interresting application of this feature is to have well written comments
+An interesting application of this feature is to have well written comments
 regarding singular and plural!  
 If you want your image to be
 ```
@@ -194,7 +209,7 @@ just set `Postfix` to `" items found"`, and `Postfix_If_Single` to
 `" item found"`.
 
 And by the way, if you want the Image to be `"No item found"` when the
-list is emtpy, `Prefix_If_Empty` or `Postfix_If_Empty` are here for you.
+list is empty, `Prefix_If_Empty` or `Postfix_If_Empty` are here for you.
 
 `Last_Separator` allows to have a different last separator, as in :
 ```
@@ -213,10 +228,10 @@ Special thanks to Emmanuel Briot and Randy Bruckardt for their help.
 
 ## References 
 
-- [The initial discussion on "iterable containers" is on comp.lang.ada](https://groups.google.com/d/msg/comp.lang.ada/El_hKSV5SVA/GkyFb27SAAAJ),
+- [The initial discussion on "iterable containers" is on comp.lang.ada](https://usenet.ada-lang.io/comp.lang.ada/61ba3677-0041-4dba-af9b-a5df48f3ce8a@googlegroups.com/),
 - [Traits-Based Containers](http://blog.adacore.com/traits-based-containers)
 - [the Generic Ada Library for Algorithms and Containers](https://github.com/AdaCore/ada-traits-containers)
-- [The EOL miss and mess in Ada](https://groups.google.com/d/msg/comp.lang.ada/qHub0JlY0dk/OwWmkj3BAgAJ)
+- [The EOL miss and mess in Ada](https://usenet.ada-lang.io/comp.lang.ada/575826a1-c983-49aa-95e2-54048f6b7b5b@googlegroups.com/)
 
 ## Building
 
@@ -227,6 +242,13 @@ To build and run the tests, just :
 
 ## Portability
 
-Only tested on my Linux box, but the sources and tests should run nice on most platform, including windows.  
+Only tested on my Linux box, but the sources and tests should run nice on most platform, including windows.
+
+Outputs on several lines comes with the question of what is (or even is there) a End Of Line marker on the platform.
+(search for `EOL` above for more details). 
+The provided `Windows_Predefined_Styles` and `Unix_Predefined_Styles` packages should do the job on most todays platform.
+
+[!NOTE]  
+Version 1.x.x are compatible with Ada 2012, and version 2.x.x are only compatible with Ada 2022.  
 
 Lionel

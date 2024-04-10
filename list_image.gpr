@@ -73,7 +73,7 @@ project List_Image is
 
    package Binder is
       for Default_Switches ("ada") use ("-Es");
-            -- -Es : store symbolic tracebacks
+      -- -Es : store symbolic tracebacks
    end Binder;
 
    package Linker is

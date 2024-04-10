@@ -23,7 +23,7 @@ all: build check
 
 build:
 	echo --- build:
-	gprbuild -P list_image.gpr
+	alr build --release
 	echo
 
 check: ./test_list_image
@@ -43,4 +43,5 @@ clean:
 	echo --- clean:
 	- gnat clean -q -P list_image.gpr
 	- rm -f tmp.ads
+	- rm obj/*
 	echo OK
