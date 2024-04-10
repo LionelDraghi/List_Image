@@ -49,13 +49,12 @@ To quote [Emmanuel Briot](http://blog.adacore.com/traits-based-containers) :
 [Ada 2022 generalized `'Image` for all types](http://ada-auth.org/standards/22over/html/Ov22-7-1.html). This is a very fortunate evolution, that removes completely one of the main use-case for `List_Image`, that is just debugging : if your're OK with the default Bracketed style of `'Image`, just use it.  
 
 As a consequence, `List_Image` no more provide the `Bracketed_List_Style` generic instantiation in the [versions following 2.0.0](https://github.com/LionelDraghi/List_Image/tree/2.0.0).  
-Note also that the new language defined `'Image` is provided for all language defined container, not only lists, going thus beyond the scope of `List_Image`.
 
 ## Versions
 
-- [Version 1.*.*](https://github.com/LionelDraghi/List_Image/tree/1.0.0) is stable, and the last compatible with Ada2012. 
+- [Version 1.x.x](https://github.com/LionelDraghi/List_Image/tree/1.0.0) is stable, and the last compatible with Ada2012. 
 
-- [Version 2.*.*](https://github.com/LionelDraghi/List_Image/tree/2.0.0) may change in incompatible ways to explore Ada 2022 consequences. Removing the `Bracketed_List_Style` generic instantiation is an example.
+- [Version 2.x.x](https://github.com/LionelDraghi/List_Image/tree/2.0.0) may change in incompatible ways to explore Ada 2022 consequences. Removing the `Bracketed_List_Style` generic instantiation is an example.
 
 ## Usage
 
