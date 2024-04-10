@@ -1,5 +1,5 @@
 -- -----------------------------------------------------------------------------
--- Copyright 2018 Lionel Draghi
+-- Copyright 2018 2024 Lionel Draghi
 --
 -- Licensed under the Apache License, Version 2.0 (the "License");
 -- you may not use this file except in compliance with the License.
@@ -32,16 +32,16 @@ package List_Image is
    --
    -- Special Prefix and Postfix are possible for null list, and for list with
    -- a single element.
-   -- This is usefull when you want to want "[A,B,C]" as an image, but you don't
+   -- This is useful when you want to want "[A,B,C]" as an image, but you don't
    -- want "[]" when the list is empty.
    --
-   -- A usefull application of this feature is to have well written comments
+   -- A useful application of this feature is to have well written comments
    -- regarding singular and plural.
    -- If you want your image to be "A item found" but "A, B, C items found",
    -- just set Postfix to " items found", and Postfix_If_Single to
    -- " item found".
    -- And by the way, if you want the Image to be "No item found" when the
-   -- list is emtpy, Prefix_If_Empty and Postfix_If_Empty are here for you.
+   -- list is empty, Prefix_If_Empty and Postfix_If_Empty are here for you.
    --
    -- Last_Separator allows to have this kind of output :
    -- "A, B, C and D"
@@ -71,7 +71,7 @@ package List_Image is
    -- --------------------------------------------------------------------------
    --
    -- Predefined **single line** styles (that are not relying on EOL
-   -- definition), and are not plateform specific, are proposed here after.
+   -- definition), and are not platform specific, are proposed here after.
    --
    -- - Default_Style :
    --   > A, B, C
@@ -97,12 +97,11 @@ package List_Image is
                                                     Postfix   => "]",
                                                     Separator => ", ");
 
-   package Markdown_Table_Style is new List_Image.Image_Style
-     (Prefix           => "|",
-      Separator        => "|",
-      Postfix          => "|",
-      Prefix_If_Empty  => "",
-      Postfix_If_Empty => "");
+   package Markdown_Table_Style is new Image_Style (Prefix           => "|",
+                                                    Separator        => "|",
+                                                    Postfix          => "|",
+                                                    Prefix_If_Empty  => "",
+                                                    Postfix_If_Empty => "");
 
    -- --------------------------------------------------------------------------
    --                     Predefined Multi-Lines styles
@@ -135,9 +134,9 @@ package List_Image is
    generic
       type Container (<>) is limited private;
       type Cursor is private;
-      with function First (Self : Container) return Cursor is <>;
-      with function Has_Element (Pos : Cursor) return Boolean is <>;
+      with function First   (Self : Container) return Cursor  is <>;
       with function Next        (Pos : Cursor) return Cursor  is <>;
+      with function Has_Element (Pos : Cursor) return Boolean is <>;
    package Cursors_Signature is end Cursors_Signature;
 
    -- --------------------------------------------------------------------------

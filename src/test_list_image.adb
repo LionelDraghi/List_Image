@@ -1,5 +1,5 @@
 -- -----------------------------------------------------------------------------
--- Copyright 2018 Lionel Draghi
+-- Copyright 2018 2024 Lionel Draghi
 --
 -- Licensed under the Apache License, Version 2.0 (the "License");
 -- you may not use this file except in compliance with the License.
@@ -93,7 +93,7 @@ procedure Test_List_Image is
 
 begin
    -- --------------------------------------------------------------------------
-   New_Test ("Bracketed_List_Style instanciation test on a List");
+   New_Test ("Bracketed_List_Style instantiation test on a List");
    declare
       Int_List : Integer_Lists.List;
 
