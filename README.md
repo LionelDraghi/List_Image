@@ -86,7 +86,7 @@ with Ada.Strings.Hash_Case_Insensitive;
      (String, Ada.Strings.Hash_Case_Insensitive, "=");
    Id_Set : Id_Sets.Set;
 
-   -- Start of List_Image related declarations
+   -- Start of List_Image related declarations ----------------------------------
 
    use Id_Sets;
    package Id_Sets_Cursors is new List_Image.Cursors_Signature
@@ -99,7 +99,7 @@ with Ada.Strings.Hash_Case_Insensitive;
      (Cursors => Id_Sets_Cursors,
       Style   => List_Image.Bracketed_List_Style);
 
-   -- End of List_Image related declarations
+   -- End of List_Image related declarations ------------------------------------
 
    ...
    Id_Set.Insert ("Salt");
