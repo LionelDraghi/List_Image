@@ -253,7 +253,7 @@ Outputs on several lines comes with the question of what is (or even is there) a
 (search for `EOL` above for more details). 
 The provided `Windows_Predefined_Styles` and `Unix_Predefined_Styles` packages should do the job on most todays platform.
 
-[!NOTE]  
-Version 1.x.x are compatible with Ada 2012, and version 2.x.x are only compatible with Ada 2022.  
+> [!NOTE]
+> Version 1.x.x are compatible with Ada 2012, and version 2.x.x are only compatible with Ada 2022.  
 
 Lionel
