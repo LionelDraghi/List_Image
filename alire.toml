@@ -1,6 +1,6 @@
 name = "list_image"
 description = "helper to dump iterable containers with customizable style"
-version = "1.0.0"
+version = "2.0.0-dev"
 
 authors = ["Lionel Draghi"]
 maintainers = ["Lionel Draghi <lionel.draghi@free.fr>"]

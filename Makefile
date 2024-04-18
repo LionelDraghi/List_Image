@@ -23,25 +23,24 @@ all: build check
 
 build:
 	echo --- build:
-	alr build --release
+	alr build
 	echo
 
-check: ./test_list_image
+check: test_list_image
 	echo --- check that both Unix/Windows child packages are identical:
 	sed "s/Windows_/Unix_/" src/list_image-windows_predefined_styles.ads > tmp.ads 
-	diff tmp.ads src/list_image-unix_predefined_styles.ads 
+	diff tmp.ads src/list_image-unix_predefined_styles.ads && rm tmp.ads
 	echo OK
 	echo	
 
 	# run tests
 	echo --- tests:
-	./test_list_image
+	alr run
 	echo
 	
 .PHONY : clean
 clean:
 	echo --- clean:
-	- gnat clean -q -P list_image.gpr
-	- rm -f tmp.ads
-	- rm obj/*
+	alr clean
+	- rm -rf tmp.ads obj/*
 	echo OK
