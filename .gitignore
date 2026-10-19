@@ -1,0 +1,7 @@
+.gitignore
+obj
+test_list_image
+old
+alire/
+.vscode/settings.json
+.serena/
