@@ -4,7 +4,7 @@ List_Image
 
 Ada generic helper to print iterable containers content, with customizable styles.
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Alire](https://img.shields.io/endpoint?url=https://alire.ada.dev/badges/list_image.json)](https://alire.ada.dev/crates/list_image.html)
 
 ------------------------------------------------------------------------
 

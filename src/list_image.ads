@@ -20,6 +20,42 @@
 package List_Image is
 
    -- --------------------------------------------------------------------------
+   --                               Use example
+   -- --------------------------------------------------------------------------
+   --  -- Let's consider a set of identifier:
+   --  with List_Image;
+   --  with Ada.Containers.Indefinite_Hashed_Sets;
+   --  with Ada.Strings.Hash_Case_Insensitive;
+   --  ...
+   --  package Id_Sets is new Ada.Containers.Indefinite_Hashed_Sets
+   --    (String, Ada.Strings.Hash_Case_Insensitive, "=");
+   --  Id_Set : Id_Sets.Set;
+   --  ...  
+   --  -- Start of List_Image related declarations -------------------------
+   --  use Id_Sets;
+   --  package Id_Sets_Cursors is new List_Image.Cursors_Signature
+   --    (Container => Id_Sets.Set,
+   --     Cursor    => Id_Sets.Cursor);
+   -- 
+   --  function Image (C : Cursor) return String is (Element (C));
+   -- 
+   --  function Id_Set_Image is new List_Image.Image
+   --    (Cursors => Id_Sets_Cursors,
+   --     Style   => List_Image.Bracketed_List_Style);
+   --  -- End of List_Image related declarations -------------------------
+
+   --  ...
+   --  Id_Set.Insert ("Salt");
+   --  Id_Set.Insert ("Pepper");
+   --  Put_Line (Id_Set_Image (Id_Set));
+
+   --  -- Note the use of the predefined style Bracketed_List_Style.
+   --  -- Image will be [Salt, Pepper]
+   --  -- List_Image provide some predefined single or multi-lines styles.
+   --  -- You can also define your own style by instantiating the Image_Style
+   --  -- generic with your own parameters, see below.
+
+   -- --------------------------------------------------------------------------
    --                               Style
    -- --------------------------------------------------------------------------
    -- This signature package defines the style of the String returned by the

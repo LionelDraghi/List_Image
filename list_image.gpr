@@ -66,8 +66,7 @@ project List_Image is
       -- M : Set maximum line length
       -- x : Check extra parentheses.
 
-     for Switches ("ada") use Common_Debug_Switches & "--coverage";
-      -- --coverage = -fprofile-arcs and -ftest-coverage
+     for Switches ("ada") use Common_Debug_Switches;
 
    end Compiler;
 
@@ -77,7 +76,7 @@ project List_Image is
    end Binder;
 
    package Linker is
-      for Default_Switches ("ada") use ("-g", "-lgcov", "-fprofile-arcs");
+      for Default_Switches ("ada") use ("-g");
    end Linker;
 
    package Pretty_Printer is

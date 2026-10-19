@@ -50,7 +50,21 @@ package List_Image.Unix_Predefined_Styles is
    --          No problem here, thanks to _If_Empty parameters nothing will
    --          be generated if the list is empty.
    --
+   -- - Simple_One_Per_Line_Style :
+   --   One item per line, each line starting with "| ",
+   --   and ending with two spaces, that force a line break in Markdown.
+   --   (was in the bbt vendored copy of list_image)
+   --
    -- --------------------------------------------------------------------------
+
+   package Simple_One_Per_Line_Style is new Image_Style
+     (Prefix           =>        EOL & "| ",
+      Separator        => "  " & EOL & "| ",
+      Postfix          => "  " & EOL & EOL,
+      Prefix_If_Empty  => "",
+      Postfix_If_Empty => "  " & EOL);
+   -- with two spaces at the end of each line for proper display in Markdown
+   -- applying the convention "  " = LF
 
    package Bulleted_List_Style is new Image_Style
      (Prefix           => EOL & "- ",
